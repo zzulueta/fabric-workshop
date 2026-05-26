@@ -415,7 +415,7 @@ real dataflow to ingest data from the Northwind OData service.
    - Select **Use automatic settings**.
    - Select **Save settings**.
 
-#### Publish and Run the Dataflow
+#### Save and Run the Dataflow
 
 1. Review your dataflow in Diagram view. You should see:
    - The **Bronze_Customers** query
@@ -509,43 +509,24 @@ create PySpark notebooks to transform Bronze files into Silver Delta tables.
 
 ### Create a Notebook for Customer Silver Transformation
 
-1. In your workspace, select **+ New** → **Notebook**.
+1. Go back to your workspace, select **+ New item** → **Notebook** (under Prepare data).
 
-2. Name the notebook `bronze_to_silver_customers`.
+2. Name the notebook `bronze_to_silver_customers`. Ensure the location is set to the FabricWorkspace-Intermediate. Select **Create**.
 
-3. In the first cell, add default Lakehouse:
-   - Select **Add** (left sidebar) → **Add Lakehouse** → Select **LakehouseIntermediate** → **Add**.
+3. In the Explorer pane on the left, go to the Data items section. Select **Add data items → From OneLake catalog**, then select LakehouseIntermediate. Click **Add**.
+> You should see the LakehouseIntermediate appear under Data items. Expand it to see the tables and files.
 
-4. In a new cell, paste the following PySpark code:
+4. Go to your notebook, Add code cell (by pressing **+ Code**), and paste the following PySpark code:
 
    ```python
    # Load raw customer data from Bronze
-   # This code handles both Dataflow Gen2 table and CSV file sources
-   
    from pyspark.sql.functions import col, trim, upper
    
-   # Try to load from Dataflow Gen2 table first
-   try:
-       df_customers_bronze = spark.read.table("bronze_customers_dataflow")
-       print("✓ Loaded customer data from Dataflow Gen2 table")
-   except:
-       # Fall back to CSV file if Dataflow Gen2 table doesn't exist
-       df_customers_bronze = spark.read.format("csv") \
-           .option("header", "true") \
-           .option("inferSchema", "true") \
-           .load("Files/bronze/customers/customers.csv")
-       print("✓ Loaded customer data from CSV file")
-       
-       # Standardize column names to match Dataflow Gen2 output
-       df_customers_bronze = df_customers_bronze \
-           .withColumnRenamed("customerID", "CustomerID") \
-           .withColumnRenamed("companyName", "CompanyName") \
-           .withColumnRenamed("contactName", "ContactName") \
-           .withColumnRenamed("contactTitle", "ContactTitle") \
-           .withColumnRenamed("city", "City") \
-           .withColumnRenamed("country", "Country")
+   # Load from Dataflow Gen2 table
+   df_customers_bronze = spark.read.table("bronze_customers_dataflow")
+   print("✓ Loaded customer data from Dataflow Gen2 table")
    
-   # Cleanse and validate (applies to both sources)
+   # Cleanse and validate
    df_customers_silver = df_customers_bronze \
        .withColumn("CompanyName", trim(col("CompanyName"))) \
        .withColumn("ContactName", trim(col("ContactName"))) \
@@ -562,23 +543,21 @@ create PySpark notebooks to transform Bronze files into Silver Delta tables.
    print(f"✓ Silver customers table created successfully with {df_customers_silver.count()} rows.")
    ```
 
-   > **Best Practice Note:** This notebook demonstrates a flexible pattern that handles
-   > multiple data sources. It first attempts to load from the Dataflow Gen2 table, then
-   > falls back to the CSV file if the table doesn't exist. This approach allows team
-   > members to use different ingestion methods while maintaining consistent downstream
-   > processing. In production environments, you would typically standardize on one
-   > ingestion method.
+   > **Note:** This notebook loads customer data directly from the Dataflow Gen2 table
+   > created in Task 3. All data cleansing and transformations are applied consistently
+   > to produce the Silver layer table.
 
-5. Select **Run all** to execute the notebook.
+5. Select **Run cell** to execute the notebook.
 
-6. Once complete, navigate to the Lakehouse **Tables** section. You should see a new
-   table named **silver_customers**.
+6. Once complete, navigate to the Lakehouse **Tables** section. Refresh the Tables. You should see a new table named **silver_customers**.
+
+7. Stop the session by clicking the stop button in the navigation bar at the top of the notebook.
 
 ### Create a Notebook for Product Silver Transformation
 
 1. Create a new notebook named `bronze_to_silver_products`.
 
-2. Add the Lakehouse as before.
+2. Add the Lakehouse in the Data items section.
 
 3. Add the following PySpark code:
 
@@ -617,11 +596,13 @@ create PySpark notebooks to transform Bronze files into Silver Delta tables.
 
 4. Run the notebook. Verify the **silver_products** table appears in the Lakehouse.
 
+5. Stop the session.
+
 ### Create Notebooks for Orders and Order Details Silver Transformation
 
 1. Create a new notebook named `bronze_to_silver_orders`.
 
-2. Add the Lakehouse.
+2. Add the Lakehouse in the Data items section.
 
 3. Add the following PySpark code:
 
@@ -630,7 +611,7 @@ create PySpark notebooks to transform Bronze files into Silver Delta tables.
    df_orders_bronze = spark.read.format("csv") \
        .option("header", "true") \
        .option("inferSchema", "true") \
-       .load("Files/bronze/orders.csv")
+       .load("Files/bronze/northwind-orders/orders.csv")
    
    # Note: This file is accessed via shortcut from Azure Blob Storage (fabricstoragezz)
    # The data is not copied into OneLake - we're reading directly from external storage
@@ -665,18 +646,20 @@ create PySpark notebooks to transform Bronze files into Silver Delta tables.
 
 4. Run the notebook. Verify the **silver_orders** table appears in the Lakehouse.
 
-5. Create another new notebook named `bronze_to_silver_order_details`.
+5. Stop the session.
 
-6. Add the Lakehouse.
+6. Create another new notebook named `bronze_to_silver_order_details`.
 
-7. Add the following PySpark code:
+7. Add the Lakehouse in the Data items section.
+
+8. Add the following PySpark code:
 
    ```python
    # Load raw order details data from Bronze (via Shortcut)
    df_order_details_bronze = spark.read.format("csv") \
        .option("header", "true") \
        .option("inferSchema", "true") \
-       .load("Files/bronze/order_details.csv")
+       .load("Files/bronze/northwind-order-details/order_details.csv")
    
    # Note: This file is accessed via shortcut from Azure Blob Storage (fabricstoragezz)
    
@@ -704,7 +687,9 @@ create PySpark notebooks to transform Bronze files into Silver Delta tables.
    print("Silver order_details table created successfully.")
    ```
 
-8. Run the notebook. Verify the **silver_order_details** table appears in the Lakehouse.
+9. Run the notebook. Verify the **silver_order_details** table appears in the Lakehouse.
+
+10. Stop the session.
 
 ---
 
