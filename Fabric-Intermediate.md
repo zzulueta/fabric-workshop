@@ -542,7 +542,6 @@ create PySpark notebooks to transform Bronze files into Silver Delta tables.
    
    print(f"✓ Silver customers table created successfully with {df_customers_silver.count()} rows.")
    ```
-
    > **Note:** This notebook loads customer data directly from the Dataflow Gen2 table
    > created in Task 3. All data cleansing and transformations are applied consistently
    > to produce the Silver layer table.
@@ -593,6 +592,7 @@ create PySpark notebooks to transform Bronze files into Silver Delta tables.
    
    print("Silver products table created successfully.")
    ```
+   > **Note:** This notebook reads the products data from the CSV file uploaded to OneLake. The transformations include trimming product names, rounding prices and costs, and ensuring referential integrity with valid ProductIDs.
 
 4. Run the notebook. Verify the **silver_products** table appears in the Lakehouse.
 
@@ -643,6 +643,7 @@ create PySpark notebooks to transform Bronze files into Silver Delta tables.
    
    print("Silver orders table created successfully.")
    ```
+   > **Note:** This notebook reads the orders data directly from the Azure Blob Storage via the shortcut. The transformations include parsing dates, rounding freight charges, and ensuring referential integrity with valid CustomerIDs.
 
 4. Run the notebook. Verify the **silver_orders** table appears in the Lakehouse.
 
@@ -662,7 +663,7 @@ create PySpark notebooks to transform Bronze files into Silver Delta tables.
        .load("Files/bronze/northwind-orders/order_details.csv")
    
    # Note: This file is accessed via shortcut from Azure Blob Storage (fabricstoragezz)
-   
+   # The data is not copied into OneLake - we're reading directly from external storage
    # Cleanse and validate
    from pyspark.sql.functions import col, round
    
@@ -686,6 +687,7 @@ create PySpark notebooks to transform Bronze files into Silver Delta tables.
    
    print("Silver order_details table created successfully.")
    ```
+   > **Note:** This notebook reads the order details data directly from the Azure Blob Storage. Cleaning steps include rounding prices and discounts, filtering out invalid records, and ensuring referential integrity with the orders table (only valid OrderIDs and ProductIDs).
 
 9. Run the notebook. Verify the **silver_order_details** table appears in the Lakehouse.
 
@@ -1004,9 +1006,8 @@ Data quality validation is critical for building reliable analytics pipelines. I
       print("\n📝 Quality report saved to 'data_quality_reports' table")
    else:
       print("No quality results were generated; nothing to summarize or save.")
-
-
    ```
+   > **Note:** This cell generates a comprehensive summary report of all quality checks, calculates an overall quality score, and saves the results to a Delta table for historical tracking.
 
 9. Select **Run all** to execute the quality validation.
 
@@ -1084,6 +1085,7 @@ for analytics. In this task you create fact and dimension tables following a sta
    
    print("Gold DimCustomers table created successfully.")
    ```
+   > **Note:** In a production scenario, you would typically implement slowly changing dimension (SCD) logic to handle changes in dimension attributes over time. For simplicity, this code creates a new dimension table without SCD handling.
 
 4. Run the notebook. Verify the **gold_dim_customers** table appears in the Lakehouse.
 
@@ -1116,6 +1118,7 @@ for analytics. In this task you create fact and dimension tables following a sta
    
    print("Gold DimProducts table created successfully.")
    ```
+   > **Note:** In a production scenario, you would typically implement slowly changing dimension (SCD) logic to handle changes in dimension attributes over time. For simplicity, this code creates a new dimension table without SCD handling.
 
 4. Run the notebook. Verify the **gold_dim_products** table appears in the Lakehouse.
 
@@ -1158,6 +1161,7 @@ for analytics. In this task you create fact and dimension tables following a sta
    
    print("Gold DimDate table created successfully.")
    ```
+   > **Note:** The date dimension is generated programmatically for a specific date range. In production, you would typically generate a date dimension that covers all relevant dates for your business.
 
 4. Run the notebook. Verify the **gold_dim_date** table appears in the Lakehouse.
 
@@ -1198,7 +1202,6 @@ for analytics. In this task you create fact and dimension tables following a sta
 
    df_fact_sales = (
       df_fact_base
-      # FIX: join to customers using o.CustomerID instead of non-existent od.CustomerID
       .join(customers, col("o.CustomerID") == col("c.CustomerID"), "left")
       .join(products, col("od.ProductID") == col("p.ProductID"), "left")
       .withColumn("DateKey", date_format(col("o.OrderDate"), "yyyyMMdd").cast("int"))
@@ -1232,6 +1235,7 @@ for analytics. In this task you create fact and dimension tables following a sta
    print("Gold FactSales table created successfully.")
 
    ```
+   > **Note:** In this code, we join the order details with orders to get the OrderDate for the DateKey, and with the customers and products dimensions to get the surrogate keys. The fact table contains foreign keys to the dimensions, along with measures like UnitPrice, Quantity, Discount, and LineTotal.
 
 4. Run the notebook. Verify the **gold_fact_sales** table appears in the Lakehouse.
 
