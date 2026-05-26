@@ -1256,26 +1256,38 @@ any ETL. This is ideal for ad-hoc analysis and BI tool connections.
 
 ### Query Gold Tables with T-SQL
 
-1. In the Lakehouse, switch to the **SQL analytics endpoint** view (tab on the left).
+1. In the Lakehouse, switch to the **SQL analytics endpoint** view (found on the upper right).
 
-2. You will see all your tables listed under the default schema.
-
-3. Select **New SQL query** from the toolbar.
+2. Select **New SQL query**.
 
 4. Run the following query to validate your Gold layer:
 
    ```sql
-   -- Count records in each table
-   SELECT 'FactSales' AS TableName, COUNT(*) AS RowCount FROM gold_fact_sales
-   UNION ALL
-   SELECT 'DimCustomers', COUNT(*) FROM gold_dim_customers
-   UNION ALL
-   SELECT 'DimProducts', COUNT(*) FROM gold_dim_products
-   UNION ALL
-   SELECT 'DimDate', COUNT(*) FROM gold_dim_date;
-   ```
+   -- Step 1: Count rows in [dbo].[gold_fact_sales] and return with table name
+   SELECT 'gold_fact_sales' AS [TableName], COUNT(*) AS [RowCount]
+   FROM [dbo].[gold_fact_sales]
 
-5. Run a business query:
+   UNION ALL
+
+   -- Step 2: Count rows in [dbo].[gold_dim_customers] and return with table name
+   SELECT 'gold_dim_customers' AS [TableName], COUNT(*) AS [RowCount]
+   FROM [dbo].[gold_dim_customers]
+
+   UNION ALL
+
+   -- Step 3: Count rows in [dbo].[gold_dim_products] and return with table name
+   SELECT 'gold_dim_products' AS [TableName], COUNT(*) AS [RowCount]
+   FROM [dbo].[gold_dim_products]
+
+   UNION ALL
+
+   -- Step 4: Count rows in [dbo].[gold_dim_date] and return with table name
+   SELECT 'gold_dim_date' AS [TableName], COUNT(*) AS [RowCount]
+   FROM [dbo].[gold_dim_date];
+   ```
+   > **Note:** This query uses UNION ALL to combine row counts from all Gold tables into a single result set for easy validation.
+
+5. Select **New SQL query**. Run a business query:
 
    ```sql
    -- Total sales by customer
@@ -1303,13 +1315,11 @@ and load data from the Lakehouse Gold layer using COPY INTO.
 
 ### Create a Data Warehouse
 
-1. In your workspace, select **+ New** → **More options**.
+1. In your workspace, select **+ New** → **Warehouse** (under Store data).
 
-2. Under **Data Warehouse**, select **Warehouse**.
+2. Name the warehouse `WarehouseIntermediate` and select **Create**.
 
-3. Name the warehouse `WarehouseIntermediate` and select **Create**.
-
-4. The warehouse opens with an empty schema.
+3. The warehouse opens with an empty schema.
 
 ### Create Schema and Tables
 
