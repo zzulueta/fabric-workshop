@@ -701,13 +701,11 @@ Data quality validation is critical for building reliable analytics pipelines. I
 
 ### Create a Data Quality Validation Notebook
 
-1. In your workspace, select **+ New item** → **Notebook**.
+1. Create a new notebook named `silver_data_quality_checks`.
 
-2. Name the notebook `silver_data_quality_checks`.
+2. Add the Lakehouse in the Data items section.
 
-3. Add the Lakehouse as before.
-
-4. In a new cell, paste the following PySpark code:
+3. In a new cell, paste the following PySpark code:
 
    ```python
    # Silver Layer Data Quality Validation
@@ -725,7 +723,7 @@ Data quality validation is critical for building reliable analytics pipelines. I
    print("=" * 80)
    ```
 
-5. Add a new cell for **Completeness Checks**:
+4. Add a new cell for **Completeness Checks**:
 
    ```python
    # ========================================
@@ -774,7 +772,7 @@ Data quality validation is critical for building reliable analytics pipelines. I
    })
    ```
 
-6. Add a new cell for **Referential Integrity Checks**:
+5. Add a new cell for **Referential Integrity Checks**:
 
    ```python
    # ========================================
@@ -870,7 +868,7 @@ Data quality validation is critical for building reliable analytics pipelines. I
    })
    ```
 
-7. Add a new cell for **Business Rule Validation**:
+6. Add a new cell for **Business Rule Validation**:
 
    ```python
    # ========================================
@@ -920,7 +918,7 @@ Data quality validation is critical for building reliable analytics pipelines. I
    })
    ```
 
-8. Add a new cell for **Duplicate Detection**:
+7. Add a new cell for **Duplicate Detection**:
 
    ```python
    # ========================================
@@ -953,7 +951,7 @@ Data quality validation is critical for building reliable analytics pipelines. I
    })
    ```
 
-9. Add a final cell for **Summary Report**:
+8. Add a final cell for **Summary Report**:
 
    ```python
    # ========================================
@@ -1010,11 +1008,11 @@ Data quality validation is critical for building reliable analytics pipelines. I
 
    ```
 
-10. Select **Run all** to execute the quality validation.
+9. Select **Run all** to execute the quality validation.
 
-11. Review the output in the notebook. You should see detailed results for each quality check category, along with an overall quality score.
+10. Review the output in the notebook. You should see detailed results for each quality check category, along with an overall quality score.
 
-12. Stop the session.
+11. Stop the session.
 
 ### Understanding the Quality Checks
 
@@ -1063,7 +1061,7 @@ for analytics. In this task you create fact and dimension tables following a sta
 
 1. Create a new notebook named `silver_to_gold_dim_customers`.
 
-2. Add the Lakehouse.
+2. Add the Lakehouse in the Data items section.
 
 3. Add the following PySpark code:
 
@@ -1093,7 +1091,7 @@ for analytics. In this task you create fact and dimension tables following a sta
 
 1. Create a new notebook named `silver_to_gold_dim_products`.
 
-2. Add the Lakehouse.
+2. Add the Lakehouse in the Data items section.
 
 3. Add the following PySpark code:
 
@@ -1123,7 +1121,7 @@ for analytics. In this task you create fact and dimension tables following a sta
 
 1. Create a new notebook named `gold_dim_date`.
 
-2. Add the Lakehouse.
+2. Add the Lakehouse in the Data items section.
 
 3. Add the following PySpark code to generate a date dimension:
 
@@ -1163,7 +1161,7 @@ for analytics. In this task you create fact and dimension tables following a sta
 
 1. Create a new notebook named `silver_to_gold_fact_sales`.
 
-2. Add the Lakehouse.
+2. Add the Lakehouse in the Data items section.
 
 3. Add the following PySpark code:
 
