@@ -1173,43 +1173,64 @@ for analytics. In this task you create fact and dimension tables following a sta
 
    ```python
    # Load Silver orders and order details
+
    df_silver_orders = spark.read.table("silver_orders")
    df_silver_order_details = spark.read.table("silver_order_details")
-   
+
    # Join orders with order details to create fact table
-   df_fact_base = df_silver_order_details \
-       .join(df_silver_orders, "OrderID", "inner")
-   
-   # Load dimensions to get surrogate keys
-   df_dim_customers = spark.read.table("gold_dim_customers")
-   df_dim_products = spark.read.table("gold_dim_products")
-   
-   # Join with dimensions
+   # Use aliases to avoid ambiguous column references after joins
    from pyspark.sql.functions import col, date_format, round
-   
-   df_fact_sales = df_fact_base \
-       .join(df_dim_customers, df_fact_base.CustomerID == df_dim_customers.CustomerID, "left") \
-       .join(df_dim_products, df_fact_base.ProductID == df_dim_products.ProductID, "left") \
-       .withColumn("DateKey", date_format(col("OrderDate"), "yyyyMMdd").cast("int")) \
-       .withColumn("LineTotal", round((col("UnitPrice") * col("Quantity")) * (1 - col("Discount")), 2)) \
-       .select(
-           col("OrderID"),
-           col("DateKey"),
-           col("CustomerKey"),
-           col("ProductKey"),
-           col("UnitPrice"),
-           col("Quantity"),
-           col("Discount"),
-           col("LineTotal")
-       )
-   
+
+   orders = df_silver_orders.alias("o")
+   order_details = df_silver_order_details.alias("od")
+   customers = spark.read.table("gold_dim_customers").alias("c")
+   products = spark.read.table("gold_dim_products").alias("p")
+
+   # Base fact from order details joined to orders
+   # (kept as a separate variable mainly for clarity/debugging)
+   df_fact_base = order_details.join(orders, col("od.OrderID") == col("o.OrderID"), "inner")
+
+   # Build fact table, explicitly qualifying columns to remove ambiguity
+   # Note: silver_order_details does NOT contain CustomerID, so we join customers via orders (o.CustomerID)
+
+   # If the business logic requires the transactional (order detail) price, use od.UnitPrice
+   # If it should use the current product master price, change to col("p.UnitPrice") instead.
+
+   df_fact_sales = (
+      df_fact_base
+      # FIX: join to customers using o.CustomerID instead of non-existent od.CustomerID
+      .join(customers, col("o.CustomerID") == col("c.CustomerID"), "left")
+      .join(products, col("od.ProductID") == col("p.ProductID"), "left")
+      .withColumn("DateKey", date_format(col("o.OrderDate"), "yyyyMMdd").cast("int"))
+      .withColumn(
+         "LineTotal",
+         round(
+               (col("od.UnitPrice") * col("od.Quantity")) * (1 - col("od.Discount")),
+               2,
+         ),
+      )
+      .select(
+         col("od.OrderID").alias("OrderID"),
+         col("DateKey"),
+         col("c.CustomerKey").alias("CustomerKey"),
+         col("p.ProductKey").alias("ProductKey"),
+         col("od.UnitPrice").alias("UnitPrice"),
+         col("od.Quantity").alias("Quantity"),
+         col("od.Discount").alias("Discount"),
+         col("LineTotal"),
+      )
+   )
+
    # Write to Gold layer as Delta table
-   df_fact_sales.write.format("delta") \
-       .mode("overwrite") \
-       .option("overwriteSchema", "true") \
-       .saveAsTable("gold_fact_sales")
-   
+   (
+      df_fact_sales.write.format("delta")
+      .mode("overwrite")
+      .option("overwriteSchema", "true")
+      .saveAsTable("gold_fact_sales")
+   )
+
    print("Gold FactSales table created successfully.")
+
    ```
 
 4. Run the notebook. Verify the **gold_fact_sales** table appears in the Lakehouse.
