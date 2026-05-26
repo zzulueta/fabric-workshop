@@ -1085,7 +1085,9 @@ for analytics. In this task you create fact and dimension tables following a sta
    print("Gold DimCustomers table created successfully.")
    ```
 
-4. Run the notebook.
+4. Run the notebook. Verify the **gold_dim_customers** table appears in the Lakehouse.
+
+5. Stop the session.
 
 ### Create a Notebook for Gold Dimension: Products
 
@@ -1115,7 +1117,9 @@ for analytics. In this task you create fact and dimension tables following a sta
    print("Gold DimProducts table created successfully.")
    ```
 
-4. Run the notebook.
+4. Run the notebook. Verify the **gold_dim_products** table appears in the Lakehouse.
+
+5. Stop the session.
 
 ### Create a Notebook for Gold Dimension: Date
 
@@ -1155,7 +1159,9 @@ for analytics. In this task you create fact and dimension tables following a sta
    print("Gold DimDate table created successfully.")
    ```
 
-4. Run the notebook.
+4. Run the notebook. Verify the **gold_dim_date** table appears in the Lakehouse.
+
+5. Stop the session.
 
 ### Create a Notebook for Gold Fact: Sales
 
@@ -1206,9 +1212,11 @@ for analytics. In this task you create fact and dimension tables following a sta
    print("Gold FactSales table created successfully.")
    ```
 
-4. Run the notebook.
+4. Run the notebook. Verify the **gold_fact_sales** table appears in the Lakehouse.
 
-5. Your Gold layer now contains a star schema:
+5. Stop the session.
+
+6. Your Gold layer now contains a star schema:
    - **gold_fact_sales** (fact table)
    - **gold_dim_customers** (dimension)
    - **gold_dim_products** (dimension)
