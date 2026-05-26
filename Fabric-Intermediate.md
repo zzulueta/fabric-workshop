@@ -659,7 +659,7 @@ create PySpark notebooks to transform Bronze files into Silver Delta tables.
    df_order_details_bronze = spark.read.format("csv") \
        .option("header", "true") \
        .option("inferSchema", "true") \
-       .load("Files/bronze/northwind-order-details/order_details.csv")
+       .load("Files/bronze/northwind-orders/order_details.csv")
    
    # Note: This file is accessed via shortcut from Azure Blob Storage (fabricstoragezz)
    
@@ -701,7 +701,7 @@ Data quality validation is critical for building reliable analytics pipelines. I
 
 ### Create a Data Quality Validation Notebook
 
-1. In your workspace, select **+ New** → **Notebook**.
+1. In your workspace, select **+ New item** → **Notebook**.
 
 2. Name the notebook `silver_data_quality_checks`.
 
@@ -959,40 +959,62 @@ Data quality validation is critical for building reliable analytics pipelines. I
    # ========================================
    # SUMMARY REPORT
    # ========================================
-   
+
    print("\n" + "=" * 80)
    print("DATA QUALITY SUMMARY REPORT")
    print("=" * 80)
-   
+
    # Convert results to DataFrame for easy viewing
    from pyspark.sql import Row
-   
-   results_df = spark.createDataFrame([Row(**r) for r in quality_results])
-   results_df.show(truncate=False)
-   
-   # Count passes and failures
-   total_checks = len(quality_results)
-   passed_checks = sum(1 for r in quality_results if r["status"] == "PASS")
-   failed_checks = total_checks - passed_checks
-   
-   print(f"\n📈 Overall Quality Score: {passed_checks}/{total_checks} checks passed ({(passed_checks/total_checks*100):.1f}%)")
-   
-   if failed_checks == 0:
-       print("\n✅ ALL QUALITY CHECKS PASSED - Data is ready for Gold layer")
+
+   # Ensure all dicts have the same set of keys before creating the DataFrame
+   # This avoids schema mismatch errors when some entries miss optional fields like 'issue_count'.
+   if quality_results:
+      # Collect all keys that ever appear in any result
+      all_keys = set().union(*[r.keys() for r in quality_results])
+
+      # Normalize each record to include all keys (missing values become None)
+      normalized_results = [
+         {k: r.get(k, None) for k in all_keys}
+         for r in quality_results
+      ]
+
+      results_df = spark.createDataFrame([Row(**r) for r in normalized_results])
+
+      # Show the summary table
+      results_df.show(truncate=False)
+
+      # Count passes and failures
+      total_checks = len(quality_results)
+      passed_checks = sum(1 for r in quality_results if r["status"] == "PASS")
+      failed_checks = total_checks - passed_checks
+
+      print(f"\n📈 Overall Quality Score: {passed_checks}/{total_checks} checks passed ({(passed_checks/total_checks*100):.1f}%)")
+
+      if failed_checks == 0:
+         print("\n✅ ALL QUALITY CHECKS PASSED - Data is ready for Gold layer")
+      else:
+         print(f"\n⚠️  {failed_checks} QUALITY CHECK(S) FAILED - Review issues before promoting to Gold")
+         print("   Action Required: Fix data quality issues in source systems or Bronze→Silver transformations")
+
+      # Save quality report to Delta table for tracking
+      results_df.write.format("delta") \
+         .mode("append") \
+         .option("mergeSchema", "true") \
+         .saveAsTable("data_quality_reports")
+
+      print("\n📝 Quality report saved to 'data_quality_reports' table")
    else:
-       print(f"\n⚠️  {failed_checks} QUALITY CHECK(S) FAILED - Review issues before promoting to Gold")
-       print("   Action Required: Fix data quality issues in source systems or Bronze→Silver transformations")
-   
-   # Save quality report to Delta table for tracking
-   results_df.write.format("delta") \
-       .mode("append") \
-       .option("mergeSchema", "true") \
-       .saveAsTable("data_quality_reports")
-   
-   print("\n📝 Quality report saved to 'data_quality_reports' table")
+      print("No quality results were generated; nothing to summarize or save.")
+
+
    ```
 
 10. Select **Run all** to execute the quality validation.
+
+11. Review the output in the notebook. You should see detailed results for each quality check category, along with an overall quality score.
+
+12. Stop the session.
 
 ### Understanding the Quality Checks
 
