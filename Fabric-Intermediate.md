@@ -1441,7 +1441,6 @@ task you create stored procedures to manage warehouse data loads.
        
        PRINT 'FactSales loaded successfully.';
    END;
-   GO
    ```
    > **Note:** This stored procedure performs a full refresh of the FactSales table by truncating it before inserting new data from the Lakehouse. In production, you would typically implement incremental load logic to handle large fact tables efficiently.
 
@@ -1475,7 +1474,6 @@ task you create stored procedures to manage warehouse data loads.
        
        PRINT 'Dimensions loaded successfully.';
    END;
-   GO
    ```
    > **Note:** This stored procedure performs a full refresh of all dimension tables. In production, you would typically implement slowly changing dimension (SCD) logic to handle changes in dimension attributes over time.
 
@@ -1536,7 +1534,7 @@ provides near-real-time performance with zero data duplication.
 
 ### Configure Relationships
 
-1. In the **Model view**, create relationships between the fact and dimension tables.
+1. Create relationships between the fact and dimension tables.
 
    Drag the respective columns from the fact table to the dimension tables to create relationships, confirm the cardinality, and select **Save** after each relationship:
 
