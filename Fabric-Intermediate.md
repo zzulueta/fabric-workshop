@@ -14,7 +14,7 @@ the following tasks:
 - Provision Microsoft Fabric workspaces backed by Fabric capacity and understand the SaaS-first analytics model
 - Build a Lakehouse on OneLake and ingest data using shortcuts, file uploads, and Dataflows Gen2
 - Transform raw data with PySpark notebooks and the SQL analytics endpoint over a single OneLake copy
-- Design a Fabric Data Warehouse with T-SQL COPY INTO, stored procedures, and dimensional modeling
+- Design a Fabric Data Warehouse with T-SQL INSERT INTO, stored procedures, and dimensional modeling
 - Build a Direct Lake semantic model that reads Delta tables natively without import or DirectQuery overhead
 - Create Power BI reports layered directly on Fabric semantic models for live, low-latency insights
 - Apply medallion architecture (Bronze / Silver / Gold) to organize raw, refined, and curated data layers
@@ -45,7 +45,7 @@ You have been tasked with:
 - Provisioning a Fabric workspace and configuring OneLake storage
 - Building a Lakehouse with multiple ingestion patterns (shortcuts, uploads, Dataflows Gen2)
 - Developing PySpark notebooks to implement Bronze → Silver → Gold transformations
-- Creating a Fabric Data Warehouse with T-SQL DDL, COPY INTO, and stored procedures
+- Creating a Fabric Data Warehouse with T-SQL DDL, INSERT INTO, and stored procedures
 - Designing a Direct Lake semantic model that virtualizes data from Delta tables
 - Building Power BI reports connected to the semantic model for live analytics
 - Documenting the medallion architecture and data lineage
@@ -88,7 +88,7 @@ Microsoft Fabric Workspace (FabricWorkspace-Intermediate)
 │   │   ├── DimCustomers (SCD Type 1)
 │   │   ├── DimProducts (SCD Type 1)
 │   │   └── DimDate (pre-populated calendar)
-│   ├── Ingestion: T-SQL COPY INTO from Lakehouse Gold tables
+│   ├── Ingestion: T-SQL INSERT INTO from Lakehouse Gold tables
 │   └── Stored Procedures: sp_Load_FactSales, sp_Load_Dimensions
 │
 ├── Direct Lake Semantic Model
@@ -110,7 +110,7 @@ Microsoft Fabric Workspace (FabricWorkspace-Intermediate)
 Data Flow:
 External Sources → Bronze (Lakehouse) → Silver (PySpark) → Gold (PySpark)
                                                            ↓
-                                            Warehouse (T-SQL COPY INTO)
+                                            Warehouse (T-SQL INSERT INTO)
                                                            ↓
                                         Direct Lake Semantic Model ← Power BI Reports
 ```
@@ -123,7 +123,7 @@ External Sources → Bronze (Lakehouse) → Silver (PySpark) → Gold (PySpark)
 - Task 4: Transform Bronze to Silver using PySpark notebooks
 - Task 5: Transform Silver to Gold using PySpark and implement dimensional modeling
 - Task 6: Query the Lakehouse using the SQL analytics endpoint
-- Task 7: Create a Fabric Data Warehouse and load data with T-SQL COPY INTO
+- Task 7: Create a Fabric Data Warehouse and load data with T-SQL INSERT INTO
 - Task 8: Build stored procedures for warehouse data loads
 - Task 9: Design a Direct Lake semantic model on Gold layer Delta tables
 - Task 10: Create Power BI reports connected to the Direct Lake semantic model
@@ -444,36 +444,22 @@ real dataflow to ingest data from the Northwind OData service.
 
 2. Select **Schedule**.
 
-2. Select **Add schedule**.
+3. Select **Add schedule**.
 
-3. Configure the refresh schedule:
+4. Configure the refresh schedule:
    - **Repeat**: Daily
    - **Time of day**: Select a time (e.g., 4:00 AM)
    - **Start date and time**: Set to the current date and time or a future time
    - **End date and time**: Set to a future date (e.g., 12 months from now)
    - **Time zone**: Select your preferred time zone
 
-4. Select **Save** to save the schedule.
+5. Select **Save** to save the schedule.
 
 > **Note:** For this lab, scheduled refresh is optional since we're working with static
 > sample data. In production scenarios, you would schedule refreshes to keep your data
 > current.
 
-### Summary: Bronze Layer Data Sources
-
-You now have Bronze data from three different sources:
-
-1. **Shortcut** (Method 1): Files/bronze/northwind-orders/orders.csv and Files/bronze/northwind-orders/order_details.csv
-   - Source: Azure Blob Storage (fabricstoragezz/northwind-orders)
-   - Accessed without copying data into OneLake
-
-2. **Upload** (Method 2): Files/bronze/products/products.csv
-   - Source: Local CSV file uploaded directly to OneLake
-
-3. **Dataflow Gen2** (Method 3): bronze_customers_dataflow table
-   - Source: Northwind OData API with Power Query transformations
-
-### Summary: Multiple Ingestion Patterns
+### Summary: Multiple Ingestion Patterns for the Bronze Layer
 
 In this task, you've explored three different data ingestion patterns:
 
@@ -695,7 +681,7 @@ create PySpark notebooks to transform Bronze files into Silver Delta tables.
 
 ---
 
-## Task 4.5: Implement Data Quality Checks in the Silver Layer
+## Implement Data Quality Checks in the Silver Layer
 
 Data quality validation is critical for building reliable analytics pipelines. In this task, you'll implement quality checks to validate data integrity, completeness, and referential relationships before promoting data to the Gold layer.
 
@@ -1261,7 +1247,7 @@ any ETL. This is ideal for ad-hoc analysis and BI tool connections.
 
 2. Select **New SQL query**.
 
-4. Run the following query to validate your Gold layer:
+3. Run the following query to validate your Gold layer:
 
    ```sql
    -- Step 1: Count rows in [dbo].[gold_fact_sales] and return with table name
@@ -1288,7 +1274,7 @@ any ETL. This is ideal for ad-hoc analysis and BI tool connections.
    ```
    > **Note:** This query uses UNION ALL to combine row counts from all Gold tables into a single result set for easy validation.
 
-5. Select **New SQL query**. Run a business query:
+4. Select **New SQL query**. Run a business query:
 
    ```sql
    -- Total sales by customer
@@ -1303,17 +1289,16 @@ any ETL. This is ideal for ad-hoc analysis and BI tool connections.
    ORDER BY TotalRevenue DESC;
    ```
 
-6. The SQL analytics endpoint uses the same Delta tables as PySpark without duplicating
+5. The SQL analytics endpoint uses the same Delta tables as PySpark without duplicating
    data. This is the power of OneLake — one copy, multiple engines.
 
 ---
 
-## Task 7: Create a Fabric Data Warehouse and Load Data with T-SQL COPY INTO
+## Task 7: Create a Fabric Data Warehouse and Load Data with T-SQL INSERT INTO
 
 Fabric Data Warehouse is a dedicated T-SQL engine optimized for dimensional modeling,
 stored procedures, and traditional warehouse workloads. In this task you create a warehouse
-and load data from the Lakehouse Gold layer using COPY INTO.
-
+and load data from the Lakehouse Gold layer using INSERT INTO.
 ### Create a Data Warehouse
 
 1. In your workspace, select **+ New** → **Warehouse** (under Store data).
@@ -1383,9 +1368,9 @@ and load data from the Lakehouse Gold layer using COPY INTO.
 
 3. Run the query to create the tables.
 
-### Load Data Using COPY INTO
+### Load Data Using INSERT INTO
 
-1. Create a new SQL query and use COPY INTO to load data from the Lakehouse Gold tables. 
+1. Create a new SQL query and use INSERT INTO to load data from the Lakehouse Gold tables. 
 
    ```sql
    -- Insert from Lakehouse to Warehouse (cross-database query)
@@ -1548,11 +1533,11 @@ provides near-real-time performance with zero data duplication.
 
 2. Select **Manage Relationships** from the Home tab to ensure all relationships are active and have the correct cardinality.
 
-### Create Measures
+### Modify Semantic Model
 
 1. Select the **gold_fact_sales** table.
 
-2. In the **Home** tab, select **New measure**:
+2. In the **Home** tab, select **New measure**. Paste the following DAX formula to create a Total Revenue measure in the formula bar:
 
    ```dax
    Total Revenue = SUM(gold_fact_sales[LineTotal])
@@ -1572,6 +1557,14 @@ provides near-real-time performance with zero data duplication.
    ```dax
    Total Quantity = SUM(gold_fact_sales[Quantity])
    ``` 
+   > **Note:** These measures will be available for use in Power BI reports and will execute directly against the Delta tables in OneLake with Direct Lake mode.
+
+4. Select the **gold_dim_date** table. 
+
+5. Select the **YearMonth** column. 
+
+6. In the **Properties** pane, set the **Data type** to **Text**
+
 ---
 
 ## Task 10: Create Power BI Reports Connected to the Direct Lake Semantic Model
@@ -1583,54 +1576,98 @@ low-latency analytics.
 
 1. Select **File** → **Create new report**.
 
-2. The report canvas opens with access to all tables and measures. In the right side you should see the fields from the gold tables and the measures you created. 
+2. The report canvas opens with access to all tables and measures. In the right side you should see the Data pane. Right-click on the pane and select **Expand all** to see all tables and measures.
 
 3. You can also see the different Visualizations options on the right.
 
 ### Build an Executive Summary Page
 
-1. Select **File** → **Save** and name it **Executive Summary**. Then click **Save**.
+1. Select **File** → **Save** and name the report **Sales Dashboard – Intermediate**. Then click **Save**.
 
 2. Select **Edit** to go back to the report canvas.
 
-3. In the Visualizations pane, select the **Card** visual. Drag the **Total Revenue** measure to the Values field. This will create a card showing the total revenue.
+3. In the Visualizations pane, select the **Card** visual. Drag the **Total Revenue** measure to the Values field. This will create a card showing the total revenue. Click the blank area of the canvas.
 
 4. Repeat the process to create cards for **Order Count** and **Avg Order Value**.
    > Note: When creating new visuals ensure you click the blank area of the canvas before selecting the visual type. This ensures the visual is added to the canvas instead of trying to add fields to an existing visual.
 
-5. Add a **Line chart** visual. Drag **gold_dim_date[Date]** to the X-axis and **Total Revenue** to the Y-axis to show the revenue trend over time.
+5. Add a **Line chart** visual. Drag **gold_dim_date[YearMonth]** to the X-axis and **Total Revenue** to the Y-axis to show the revenue trend over time.
 
-6. Rearrage the visual elements on the canvas to create a clean executive summary layout.
+6. In the line chart visual, hover to the data point where YearMonth = Blank. Right-click and select **Exclude** to filter out blank dates from the chart.
+
+7. Select the ellipsis (three dots) on the line chart visual found in the upper right of the visual. Select **Sort by** → **YearMonth**.
+
+8. Select the ellipsis (three dots) on the line chart visual found in the upper right of the visual. Select **Sort by** → **Sort ascending**.
+> **Note:** This will ensure the X-axis is sorted chronologically by YearMonth.
+
+9. Rearrange the visual elements on the canvas to create a clean executive summary layout.
    - Place the three cards at the top in a row.
    - Place the line chart below the cards, spanning the width of the page.
+> **Note:** Power BI Desktop allows you more flexibility in customizing the layout, formatting, and design of the report. 
 
+10. Go to Page1 at the bottom of the report canvas and rename it to **Executive Summary**.
+
+> **Note** You may view a copy of the completed page in the power-bi-report-pages folder in this repository.
 
 
 ### Build a Customer Analysis Page
 
-1. Add a new page and name it **Customer Analysis**.
+1. At the bottom of the report canvas, add a new page and name it **Customer Analysis**.
 
-2. Add the following visuals:
+2. Add a table visual. Drag the following fields to the table:
+   - **gold_dim_customers[CompanyName]**
+   - **gold_dim_customers[Country]**
+   - **Total Revenue** (measure from the semantic model)
+   - **Order Count** (measure from the semantic model)
 
-   - **Table**: Display **CompanyName**, **Country**, **Total Revenue**, and **Order Count**.
-   - **Bar chart**: X-axis = **Country**, Y-axis = **Total Revenue**, to show revenue by country.
-   - **Donut chart**: Values = **Total Revenue**, Legend = **Country**, to show revenue distribution.
+   Click the blank area of the canvas.
+
+3. Add a **Clustered bar chart** visual. Drag **gold_dim_customers[Country]** to the Y-axis and **Total Revenue** to the X-axis to show revenue by country.
+
+   Click the blank area of the canvas.
+
+4. Add a **Donut chart** visual. Drag **Total Revenue** to the Values field and **gold_dim_customers[Country]** to the Legend field to show revenue distribution by country.
+
+5. Arrange the visuals on the canvas.
+   - Place the table on the left side of the page. Expand the table visual to show more rows and columns up to the bottom of the page.
+   - Place the bar chart to the right of the table.
+   - Place the donut chart below the bar chart.
+
+> **Note** You may view a copy of the completed page in the power-bi-report-pages folder in this repository.
 
 ### Build a Product Performance Page
 
-1. Add a new page and name it **Product Performance**.
+1. At the bottom of the report canvas, add a new page and name it **Product Performance**.
 
-2. Add the following visuals:
+2. Add a table visual. Drag the following fields to the table:
+   - **gold_dim_products[ProductName]**
+   - **gold_dim_products[QuantityPerUnit]**
+   - **Total Revenue** (measure from the semantic model)
+   - **Total Quantity** (measure from the semantic model)
 
-   - **Table**: Display **ProductName**, **QuantityPerUnit**, **Total Revenue**, and **Total Quantity**.
-   - **Column chart**: X-axis = **CategoryID**, Y-axis = **Total Revenue**, to show revenue by product category.
-   - **Treemap**: Group = **CategoryID**, Values = **Total Revenue**.
+   Click the blank area of the canvas.
+
+3. Add a **Clustered column chart** visual. Drag **gold_dim_products[CategoryID]** to the X-axis and **Total Revenue** to the Y-axis to show revenue by product category.
+
+   Click the blank area of the canvas.
+
+4. Add a **Treemap** visual. Drag **Total Revenue** to the Values field and **gold_dim_products[CategoryID]** to the Category field to show revenue distribution by product category.
+
+5. Arrange the visuals on the canvas.
+   - Place the table on the left side of the page. Expand the table visual to show more rows and columns up to the bottom of the page.
+   - Place the column chart to the right of the table.
+   - Place the treemap below the column chart.
+
+> **Note** You may view a copy of the completed page in the power-bi-report-pages folder in this repository.
+
 
 ### Publish the Report
 
-1. Select **File** → **Save** and name the report `Sales Dashboard – Intermediate`.
+1. Select **File** → **Save**.
 
 2. The report is saved in your workspace and available for sharing.
+
+3. Select **Reading view** to experience the report as an end user.
 
 3. Because the report uses Direct Lake mode, it always reflects the latest data in the
    Lakehouse without requiring scheduled refreshes.
@@ -1646,77 +1683,74 @@ and validate data lineage across layers.
 
 1. Open the Lakehouse and review the folder structure:
 
-   - **Bronze**: Raw, unprocessed data (CSV files uploaded and shortcuts)
-     - bronze/customers/
+   - **Bronze**: Raw, unprocessed data (CSV files uploaded, shortcuts, and Dataflows Gen2 outputs)
+     - bronze_customers_dataflow
      - bronze/products/
-     - bronze/orders/
-     - bronze/order_details/
-   - **Silver**: Cleansed, validated Delta tables (silver_customers, silver_products, silver_orders, silver_order_details)
-   - **Gold**: Business-level dimensional model (gold_fact_sales, gold_dim_customers, gold_dim_products, gold_dim_date)
+     - bronze/northwind-orders/
+   - **Silver**: Cleansed, validated Delta tables
+     - silver_customers
+     - silver_order_details
+     - silver_orders
+     - silver_products
+   - **Gold**: Business-level dimensional model
+      - gold_dim_customers
+      - gold_dim_date
+      - gold_dim_products
+      - gold_fact_sales
 
 2. Document the purpose of each layer:
 
    | Layer | Purpose | Format | Quality |
    | --- | --- | --- | --- |
-   | Bronze | Raw ingestion from source systems | CSV, Parquet, JSON | Unvalidated |
+   | Bronze | Raw ingestion from source systems | CSV, Parquet, Dataflows | Unvalidated |
    | Silver | Cleansed, deduplicated, conformed | Delta tables | Validated |
    | Gold | Business-ready aggregates and dimensions | Delta tables (star schema) | Curated |
 
 ### Validate Data Lineage
 
-1. Open the **Lineage view** in your workspace:
-   - Select the workspace name → **View** → **Lineage view**.
+1. Go to the workspace **FabricWorkspace-Intermediate**.
 
-2. You should see the following flow:
+2. In the LakehouseIntermediate, select the ellipsis (three dots) next to the Lakehouse name and select **View item lineage**.
 
-   ```
-   Lakehouse (Bronze Files) → PySpark Notebooks (Silver) → PySpark Notebooks (Gold)
-                                                              ↓
-                                               Warehouse (Sales Schema)
-                                                              ↓
-                                               Semantic Model (Direct Lake)
-                                                              ↓
-                                               Power BI Report
-   ```
+3. View the lineage graph to see the data flow of your Lakehouse items.
 
-3. Lineage view automatically tracks dependencies between Fabric items and highlights
-   the data flow.
+4. Select Cancel.
 
-### Verify End-to-End Refresh
+5. In your workspace, go to the upper right and select the **Lineage view** icon (it looks like a flowchart).
 
-1. Add a new row to the **bronze/order_details/order_details.csv** file (upload a modified version).
+6. View the lineage graph to see the end-to-end data flow across all Fabric items in your workspace, including OData source, Dataflows, Azure Blob Storage, Lakehouse, Notebooks, SQL Analytics endpoint, Data Warehouse, semantic model, and Power BI report.
 
-2. Rerun the following notebooks in sequence:
-   - `bronze_to_silver_order_details`
-   - `silver_to_gold_fact_sales`
-
-3. In the Warehouse, run the stored procedure:
-
-   ```sql
-   EXEC Sales.sp_Load_FactSales;
-   ```
-
-4. Open the Power BI report. The new data should appear automatically (Direct Lake mode).
-
-5. You have now validated the full medallion architecture with end-to-end lineage.
+7. Select the **List view** icon beside the **Lineage view** icon to switch back.
 
 ---
 
 ## Lab Cleanup (Optional)
 
+### Delete the Fabric Workspace
 To avoid ongoing charges, consider deleting resources after completing the lab:
 
 1. In the Fabric portal, navigate to your workspace **FabricWorkspace-Intermediate**.
 
-2. Select the workspace settings (gear icon) → **Workspace settings**.
+2. Select **Workspace settings** (gear icon) in the upper right.
 
-3. Under **Other**, select **Remove this workspace**.
+3. Scroll down and select **Remove this workspace**.
 
-4. Confirm the deletion.
+4. Select **Delete** to confirm the deletion.
 
 > **Note:** This will delete all Fabric items in the workspace but will not delete or
 > stop your F2 capacity. To manage or delete the capacity, navigate to the Capacity
 > settings in the Admin portal.
+
+### Delete the Fabric Capacity (if desired)
+If you want to stop or delete the F2 capacity provisioned for this lab:
+
+1. Go the Azure portal (https://portal.azure.com) 
+
+2. In the search bar, type **Microsoft Fabric** and select it from the results.
+
+3. Select your capacity (e.g., **fabriccapacityworkshop**).
+
+4. To stop the capacity, select **Stop** at the top. To delete the capacity, select **Delete** and type the name to confirm.
 
 ---
 
@@ -1727,7 +1761,7 @@ In this lab you have:
 ✓ Provisioned a Microsoft Fabric workspace backed by Fabric capacity and understood the SaaS-first analytics model  
 ✓ Built a Lakehouse on OneLake and ingested data using shortcuts, file uploads, and Dataflows Gen2  
 ✓ Transformed raw data with PySpark notebooks and the SQL analytics endpoint over a single OneLake copy  
-✓ Designed a Fabric Data Warehouse with T-SQL COPY INTO, stored procedures, and dimensional modeling  
+✓ Designed a Fabric Data Warehouse with T-SQL INSERT INTO, stored procedures, and dimensional modeling  
 ✓ Built a Direct Lake semantic model that reads Delta tables natively without import or DirectQuery overhead  
 ✓ Created Power BI reports layered directly on Fabric semantic models for live, low-latency insights  
 ✓ Applied medallion architecture (Bronze / Silver / Gold) to organize raw, refined, and curated data layers  
