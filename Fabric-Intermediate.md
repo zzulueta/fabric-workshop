@@ -1364,6 +1364,7 @@ and load data from the Lakehouse Gold layer using COPY INTO.
       Day INT,
       Quarter INT,
       DayOfWeek INT,
+      YearMonth INT
    );
 
    -- Create FactSales
@@ -1549,7 +1550,7 @@ provides near-real-time performance with zero data duplication.
 
 2. Select **Manage Relationships** from the Home tab to ensure all relationships are active and have the correct cardinality.
 
-### Create Measures and Calculated Columns
+### Create Measures
 
 1. Select the **gold_fact_sales** table.
 
@@ -1573,11 +1574,6 @@ provides near-real-time performance with zero data duplication.
    ```dax
    Total Quantity = SUM(gold_fact_sales[Quantity])
    ``` 
-
-4. Select the **gold_dim_date** table. Create a calculated column:
-   ```dax
-   YearMonth = gold_dim_date[Year] * 100 + gold_dim_date[Month]
-   ```
 ---
 
 ## Task 10: Create Power BI Reports Connected to the Direct Lake Semantic Model
