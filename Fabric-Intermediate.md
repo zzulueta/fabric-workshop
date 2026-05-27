@@ -337,7 +337,7 @@ real dataflow to ingest data from the Northwind OData service.
 
 #### Create a Dataflow Gen2
 
-1. Go back to your workspace (**FabricWorkspace-Intermediate**), select **+ New item** → **Dataflow Gen2** found under Get data.
+1. Go back to your workspace (**FabricWorkspace-Intermediate**), select **+ New item** → **Dataflow Gen2** (under Get data).
 
 2. Name the dataflow `Dataflow_Bronze_Customers` and select **Create**.
 
@@ -1330,109 +1330,60 @@ and load data from the Lakehouse Gold layer using COPY INTO.
    ```sql
    -- Create Sales schema
    CREATE SCHEMA Sales;
-   GO
-   
+
    -- Create DimCustomers
    CREATE TABLE Sales.DimCustomers (
-       CustomerKey BIGINT NOT NULL,
-       CustomerID NVARCHAR(10),
-       CompanyName NVARCHAR(255),
-       ContactName NVARCHAR(255),
-       ContactTitle NVARCHAR(100),
-       City NVARCHAR(100),
-       Country NVARCHAR(100),
-       CONSTRAINT PK_DimCustomers PRIMARY KEY NONCLUSTERED (CustomerKey) NOT ENFORCED
+      CustomerKey BIGINT NOT NULL,
+      CustomerID VARCHAR(10),
+      CompanyName VARCHAR(255),
+      ContactName VARCHAR(255),
+      ContactTitle VARCHAR(100),
+      City VARCHAR(100),
+      Country VARCHAR(100)
    );
-   GO
-   
+
    -- Create DimProducts
    CREATE TABLE Sales.DimProducts (
-       ProductKey BIGINT NOT NULL,
-       ProductID INT,
-       ProductName NVARCHAR(255),
-       QuantityPerUnit NVARCHAR(100),
-       UnitPrice DECIMAL(18,2),
-       CategoryID INT,
-       UnitCost DECIMAL(18,2),
-       Discontinued INT,
-       CONSTRAINT PK_DimProducts PRIMARY KEY NONCLUSTERED (ProductKey) NOT ENFORCED
+      ProductKey BIGINT NOT NULL,
+      ProductID INT,
+      ProductName VARCHAR(255),
+      QuantityPerUnit VARCHAR(100),
+      UnitPrice DECIMAL(18,2),
+      CategoryID INT,
+      UnitCost DECIMAL(18,2),
+      Discontinued INT
    );
-   GO
-   
+
    -- Create DimDate
    CREATE TABLE Sales.DimDate (
-       DateKey INT NOT NULL,
-       Date DATE,
-       Year INT,
-       Month INT,
-       Day INT,
-       Quarter INT,
-       DayOfWeek INT,
-       CONSTRAINT PK_DimDate PRIMARY KEY NONCLUSTERED (DateKey) NOT ENFORCED
+      DateKey INT NOT NULL,
+      Date DATE,
+      Year INT,
+      Month INT,
+      Day INT,
+      Quarter INT,
+      DayOfWeek INT,
    );
-   GO
-   
+
    -- Create FactSales
    CREATE TABLE Sales.FactSales (
-       OrderID INT NOT NULL,
-       DateKey INT,
-       CustomerKey BIGINT,
-       ProductKey BIGINT,
-       UnitPrice DECIMAL(18,2),
-       Quantity INT,
-       Discount DECIMAL(18,2),
-       LineTotal DECIMAL(18,2),
-       CONSTRAINT PK_FactSales PRIMARY KEY NONCLUSTERED (OrderID, ProductKey) NOT ENFORCED
+      OrderID INT NOT NULL,
+      DateKey INT,
+      CustomerKey BIGINT,
+      ProductKey BIGINT,
+      UnitPrice DECIMAL(18,2),
+      Quantity INT,
+      Discount DECIMAL(18,2),
+      LineTotal DECIMAL(18,2)
    );
-   GO
    ```
+   > **Note:** The table definitions should match the structure of the Gold tables in the Lakehouse.
 
 3. Run the query to create the tables.
 
 ### Load Data Using COPY INTO
 
-1. Create a new SQL query.
-
-2. Use COPY INTO to load data from the Lakehouse Gold tables. You need the OneLake path
-   to your Lakehouse tables. The path format is:
-   ```
-   https://onelake.dfs.fabric.microsoft.com/<workspace-id>/<lakehouse-id>/Tables/<table-name>
-   ```
-
-   > **Note:** For simplicity, you can also use a shortcut or direct table reference if
-   > your warehouse and lakehouse are in the same workspace.
-
-3. Example COPY INTO syntax (adjust paths as needed):
-
-   ```sql
-   -- Load DimCustomers
-   COPY INTO Sales.DimCustomers
-   FROM 'https://onelake.dfs.fabric.microsoft.com/.../Tables/gold_dim_customers/'
-   WITH (FILE_TYPE = 'DELTA');
-   GO
-   
-   -- Load DimProducts
-   COPY INTO Sales.DimProducts
-   FROM 'https://onelake.dfs.fabric.microsoft.com/.../Tables/gold_dim_products/'
-   WITH (FILE_TYPE = 'DELTA');
-   GO
-   
-   -- Load DimDate
-   COPY INTO Sales.DimDate
-   FROM 'https://onelake.dfs.fabric.microsoft.com/.../Tables/gold_dim_date/'
-   WITH (FILE_TYPE = 'DELTA');
-   GO
-   
-   -- Load FactSales
-   COPY INTO Sales.FactSales
-   FROM 'https://onelake.dfs.fabric.microsoft.com/.../Tables/gold_fact_sales/'
-   WITH (FILE_TYPE = 'DELTA');
-   GO
-   ```
-
-4. If you cannot determine the exact OneLake path, an alternative approach is to use
-   **Cross-database queries** in Fabric. You can query the Lakehouse tables directly
-   from the Warehouse:
+1. Create a new SQL query and use COPY INTO to load data from the Lakehouse Gold tables. 
 
    ```sql
    -- Insert from Lakehouse to Warehouse (cross-database query)
@@ -1448,18 +1399,20 @@ and load data from the Lakehouse Gold layer using COPY INTO.
    INSERT INTO Sales.FactSales
    SELECT * FROM [LakehouseIntermediate].[dbo].[gold_fact_sales];
    ```
+   > **Note:** The warehouse can query the Lakehouse directly without needing to copy data. The INSERT INTO ... SELECT ... syntax allows you to load data into the warehouse tables from the Lakehouse tables.
 
-5. Verify the data loaded successfully:
+2. Select **New SQL query** and verify the data loaded successfully:
 
    ```sql
-   SELECT 'DimCustomers' AS TableName, COUNT(*) AS RowCount FROM Sales.DimCustomers
+   SELECT 'DimCustomers' AS [TableName], COUNT(*) AS [RowCount] FROM Sales.DimCustomers
    UNION ALL
-   SELECT 'DimProducts', COUNT(*) FROM Sales.DimProducts
+   SELECT 'DimProducts' AS [TableName], COUNT(*) AS [RowCount] FROM Sales.DimProducts
    UNION ALL
-   SELECT 'DimDate', COUNT(*) FROM Sales.DimDate
+   SELECT 'DimDate' AS [TableName], COUNT(*) AS [RowCount] FROM Sales.DimDate
    UNION ALL
-   SELECT 'FactSales', COUNT(*) FROM Sales.FactSales;
+   SELECT 'FactSales' AS [TableName], COUNT(*) AS [RowCount] FROM Sales.FactSales;   
    ```
+   > **Note:** This query validates that the expected number of rows were loaded into each warehouse table.
 
 ---
 
@@ -1488,8 +1441,9 @@ task you create stored procedures to manage warehouse data loads.
    END;
    GO
    ```
+   > **Note:** This stored procedure performs a full refresh of the FactSales table by truncating it before inserting new data from the Lakehouse. In production, you would typically implement incremental load logic to handle large fact tables efficiently.
 
-3. Run the procedure to test:
+3. Select **New SQL query** and run the procedure to test:
 
    ```sql
    EXEC Sales.sp_Load_FactSales;
@@ -1497,7 +1451,7 @@ task you create stored procedures to manage warehouse data loads.
 
 ### Create a Stored Procedure to Load Dimensions
 
-1. Add the following stored procedure for dimensions:
+1. Select **New SQL query** and add the following stored procedure for dimensions:
 
    ```sql
    CREATE OR ALTER PROCEDURE Sales.sp_Load_Dimensions
@@ -1521,8 +1475,9 @@ task you create stored procedures to manage warehouse data loads.
    END;
    GO
    ```
+   > **Note:** This stored procedure performs a full refresh of all dimension tables. In production, you would typically implement slowly changing dimension (SCD) logic to handle changes in dimension attributes over time.
 
-2. Run the procedure:
+2. Select **New SQL query** and run the procedure:
 
    ```sql
    EXEC Sales.sp_Load_Dimensions;
@@ -1530,6 +1485,10 @@ task you create stored procedures to manage warehouse data loads.
 
 3. These stored procedures can be scheduled using Fabric Data Pipelines or called from
    orchestration tools.
+
+4. You can rename the SQL query to `Load_FactSales` and `Load_Dimensions` for better organization.
+   - In the Explorer pane, right-click the SQL query and select **Rename**.
+   - Name it `Load_FactSales` for the fact table procedure and `Load_Dimensions` for the dimension procedure.
 
 > **Production Note:** The stored procedures above use a **full refresh pattern** 
 > (TRUNCATE + INSERT), which is simple and appropriate for small to medium datasets. 
@@ -1546,25 +1505,32 @@ provides near-real-time performance with zero data duplication.
 
 ### Create a Direct Lake Semantic Model
 
-1. In your workspace, select **+ New** → **More options**.
+1. In your workspace, select **+ New item** → **Semantic model** (under Store data).
 
-2. Under **Power BI**, select **Semantic model**.
+2. Select **OneLake catalog**.
 
-3. Configure the semantic model:
+3. Select **LakehouseIntermediate**.
 
-   | Setting | Value |
-   | --- | --- |
-   | Name | `SemanticModel_SalesAnalytics` |
-   | Lakehouse | **LakehouseIntermediate** |
-   | Tables | Select **gold_fact_sales**, **gold_dim_customers**, **gold_dim_products**, **gold_dim_date** |
+4. Click **Connect**.
 
-4. Select **Create**.
+5. Name the model `SemanticModel_SalesAnalytics`.
 
-5. The semantic model opens in the modeling view.
+6. Select the following gold tables to include in the model:
+   - gold_dim_customers
+   - gold_dim_date
+   - gold_dim_products
+   - gold_fact_sales
+   
+7. Click **Confirm**.
+
+8. The semantic model designer opens with the selected tables. Hover your mouse over each table to see the storage mode. It should show **Direct Lake**.
+
 
 ### Configure Relationships
 
-1. In the **Model view**, create relationships between the fact and dimension tables:
+1. In the **Model view**, create relationships between the fact and dimension tables.
+
+   Drag the respective columns from the fact table to the dimension tables to create relationships, confirm the cardinality, and select **Save** after each relationship:
 
    | From (Fact) | To (Dimension) | Cardinality |
    | --- | --- | --- |
@@ -1572,7 +1538,9 @@ provides near-real-time performance with zero data duplication.
    | gold_fact_sales[CustomerKey] | gold_dim_customers[CustomerKey] | Many-to-One |
    | gold_fact_sales[ProductKey] | gold_dim_products[ProductKey] | Many-to-One |
 
-2. Ensure all relationships are active and have the correct cardinality.
+   > **Note:** The relationships should be based on the foreign keys in the fact table that reference the surrogate keys in the dimension tables. You may want to place the fact table in the center and arrange the dimension tables around it for a clear star schema layout.
+
+2. Select **Manage Relationships** from the Navigation bar to ensure all relationships are active and have the correct cardinality.
 
 ### Create Measures
 
