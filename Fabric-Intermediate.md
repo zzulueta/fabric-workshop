@@ -1151,7 +1151,8 @@ for analytics. In this task you create fact and dimension tables following a sta
        .withColumn("Day", dayofmonth(col("Date"))) \
        .withColumn("Quarter", quarter(col("Date"))) \
        .withColumn("DayOfWeek", dayofweek(col("Date"))) \
-       .select("DateKey", "Date", "Year", "Month", "Day", "Quarter", "DayOfWeek")
+       .withColumn("YearMonth", (year(col("Date")) * 100 + month(col("Date"))).cast("int")) \
+       .select("DateKey", "Date", "Year", "Month", "Day", "Quarter", "DayOfWeek", "YearMonth")
    
    # Write to Gold layer
    df_dim_date.write.format("delta") \
@@ -1525,6 +1526,12 @@ provides near-real-time performance with zero data duplication.
 
 8. The semantic model designer opens with the selected tables. Hover your mouse over each table to see the storage mode. It should show **Direct Lake**.
 
+   > Direct Lake mode ensures that queries run directly against the Delta tables in OneLake
+   > without importing data into Power BI's VertiPaq engine. This provides:
+   > - Real-time data access
+   > - No refresh schedules required
+   > - Lower storage costs
+   > - Automatic schema updates
 
 ### Configure Relationships
 
@@ -1540,17 +1547,20 @@ provides near-real-time performance with zero data duplication.
 
    > **Note:** The relationships should be based on the foreign keys in the fact table that reference the surrogate keys in the dimension tables. You may want to place the fact table in the center and arrange the dimension tables around it for a clear star schema layout.
 
-2. Select **Manage Relationships** from the Navigation bar to ensure all relationships are active and have the correct cardinality.
+2. Select **Manage Relationships** from the Home tab to ensure all relationships are active and have the correct cardinality.
 
-### Create Measures
+### Create Measures and Calculated Columns
 
 1. Select the **gold_fact_sales** table.
 
-2. In the **Modeling** ribbon, select **New measure** and add the following measures:
+2. In the **Home** tab, select **New measure**:
 
    ```dax
    Total Revenue = SUM(gold_fact_sales[LineTotal])
    ```
+   Press the checkmark to save the measure.
+
+3. Do the same to create the following additional measures in the **gold_fact_sales** table:
 
    ```dax
    Order Count = DISTINCTCOUNT(gold_fact_sales[OrderID])
@@ -1562,22 +1572,12 @@ provides near-real-time performance with zero data duplication.
 
    ```dax
    Total Quantity = SUM(gold_fact_sales[Quantity])
+   ``` 
+
+4. Select the **gold_dim_date** table. Create a calculated column:
+   ```dax
+   YearMonth = gold_dim_date[Year] * 100 + gold_dim_date[Month]
    ```
-
-3. Save the semantic model.
-
-### Verify Direct Lake Mode
-
-1. In the semantic model settings, confirm that the storage mode for all tables is
-   **Direct Lake**.
-
-2. Direct Lake mode ensures that queries run directly against the Delta tables in OneLake
-   without importing data into Power BI's VertiPaq engine. This provides:
-   - Real-time data access
-   - No refresh schedules required
-   - Lower storage costs
-   - Automatic schema updates
-
 ---
 
 ## Task 10: Create Power BI Reports Connected to the Direct Lake Semantic Model
@@ -1587,24 +1587,30 @@ low-latency analytics.
 
 ### Create a Power BI Report
 
-1. In your workspace, select **+ New** → **Report**.
+1. Select **File** → **Create new report**.
 
-2. Select the data source: **SemanticModel_SalesAnalytics**.
+2. The report canvas opens with access to all tables and measures. In the right side you should see the fields from the gold tables and the measures you created. 
 
-3. The report canvas opens with access to all tables and measures.
+3. You can also see the different Visualizations options on the right.
 
 ### Build an Executive Summary Page
 
-1. Rename the page to **Executive Summary**.
+1. Select **File** → **Save** and name it **Executive Summary**. Then click **Save**.
 
-2. Add the following visuals:
+2. Select **Edit** to go back to the report canvas.
 
-   - **Card**: Display **Total Revenue** measure.
-   - **Card**: Display **Order Count** measure.
-   - **Card**: Display **Avg Order Value** measure.
-   - **Line chart**: X-axis = **gold_dim_date[Date]**, Y-axis = **Total Revenue**, to show revenue trend over time.
+3. In the Visualizations pane, select the **Card** visual. Drag the **Total Revenue** measure to the Values field. This will create a card showing the total revenue.
 
-3. Format the visuals with your preferred theme.
+4. Repeat the process to create cards for **Order Count** and **Avg Order Value**.
+   > Note: When creating new visuals ensure you click the blank area of the canvas before selecting the visual type. This ensures the visual is added to the canvas instead of trying to add fields to an existing visual.
+
+5. Add a **Line chart** visual. Drag **gold_dim_date[Date]** to the X-axis and **Total Revenue** to the Y-axis to show the revenue trend over time.
+
+6. Rearrage the visual elements on the canvas to create a clean executive summary layout.
+   - Place the three cards at the top in a row.
+   - Place the line chart below the cards, spanning the width of the page.
+
+
 
 ### Build a Customer Analysis Page
 
