@@ -161,7 +161,7 @@ This capacity provides the compute resources for all Fabric workloads.
    | Subscription | Select your Azure subscription |
    | Resource group | Select **Create new** and type `rg-fabric-workshop` |
    | Capacity name | Enter `fabriccapacityworkshop` |
-   | Region | Select a region close to your location (e.g., Australia East or West Europe) |
+   | Region | Select a region close to your location (e.g., Australia East or France Central) |
    | Size | Select **F2** (2 capacity units) |
 
    > **Note:**
