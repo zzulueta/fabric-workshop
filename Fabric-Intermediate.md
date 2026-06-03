@@ -419,8 +419,10 @@ real dataflow to ingest data from the Northwind OData service.
 
 #### Save and Run the Dataflow
 
-1. Review your dataflow in Diagram view by selecting the **View tab -> Query settings**. You should see:
+1. Review your dataflow query visualization by selecting the **View tab -> Diagram view** again. You should see:
    - The **Bronze_Customers** query
+   - A source indicator showing it's connected to the OData service
+   - The applied transformations (trim, uppercase, choose columns)
    - A destination indicator showing it's connected to your Lakehouse
 
 2. Select **Save & run** under the Home tab to save and run your dataflow.
