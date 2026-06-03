@@ -164,7 +164,9 @@ This capacity provides the compute resources for all Fabric workloads.
    | Region | Select a region close to your location (e.g., Australia East or West Europe) |
    | Size | Select **F2** (2 capacity units) |
 
-   > **Note:** F2 is the smallest Fabric capacity SKU and is suitable for development 
+   > **Note:**
+   > 1. Sign up first with Microsoft Fabric using the same credentials then click Try again in order to choose your region.  
+   > 2. F2 is the smallest Fabric capacity SKU and is suitable for development 
    > and learning scenarios. Production workloads typically require F4 or higher.
 
 5. Select **Review + create**.
@@ -417,7 +419,7 @@ real dataflow to ingest data from the Northwind OData service.
 
 #### Save and Run the Dataflow
 
-1. Review your dataflow in Diagram view. You should see:
+1. Review your dataflow in Diagram view by selecting the **View tab -> Query settings**. You should see:
    - The **Bronze_Customers** query
    - A destination indicator showing it's connected to your Lakehouse
 
