@@ -1370,7 +1370,9 @@ and load data from the Lakehouse Gold layer using INSERT INTO.
    ```
    > **Note:** The table definitions should match the structure of the Gold tables in the Lakehouse.
 
-3. Run the query to create the tables.
+3. Run the queries one by one to create the tables. You can do this by selecting each CREATE TABLE statement and running it separately.
+
+4. After running the DDL, you should see the new tables under the Sales schema in the warehouse.
 
 ### Load Data Using INSERT INTO
 
@@ -1391,6 +1393,8 @@ and load data from the Lakehouse Gold layer using INSERT INTO.
    SELECT * FROM [LakehouseIntermediate].[dbo].[gold_fact_sales];
    ```
    > **Note:** The warehouse can query the Lakehouse directly without needing to copy data. The INSERT INTO ... SELECT ... syntax allows you to load data into the warehouse tables from the Lakehouse tables.
+
+   Run the query to load the data then verify that the rows were inserted successfully by viewing the tables in the warehouse.
 
 2. Select **New SQL query** and verify the data loaded successfully:
 
@@ -1495,6 +1499,8 @@ provides near-real-time performance with zero data duplication.
 ### Create a Direct Lake Semantic Model
 
 1. In your workspace, select **+ New item** → **Semantic model** (under Store data).
+
+   When prompted to Upgrade to a paid Power BI License, select **Try free**. Then perform the same step above.
 
 2. Select **OneLake catalog**.
 
