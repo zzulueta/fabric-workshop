@@ -142,6 +142,11 @@ backed by a Fabric capacity (F SKU) to enable Fabric-specific features.
 > F2 capacity, which provides a good balance of performance and cost for learning
 > and development scenarios.
 
+### Create a Fabric Account and Sign In
+1. Sign up for Microsoft Fabric using the same credentials as your Azure subscription at [https://app.fabric.microsoft.com](https://app.fabric.microsoft.com).
+
+2. Fill in the required details (name, email, etc.) and complete the sign-up process.
+
 ### Deploy a Fabric Capacity (F2) in Azure Portal
 
 Before creating a Fabric workspace, you need to provision a Fabric capacity in Azure. 
