@@ -157,7 +157,7 @@ Power BI Desktop is a free Windows application that allows you to connect to dat
 
 ### Launch Power BI Desktop
 
-1. Open **Power BI Desktop** from your Start menu or desktop shortcut.
+1. Open **Power BI Desktop** from your Start menu or desktop shortcut. Select **Blank report**
 
 2. If you see a welcome screen or tutorial, you can close it or follow along briefly to get familiar with the interface.
 
@@ -171,8 +171,6 @@ Power BI Desktop is a free Windows application that allows you to connect to dat
    | **Fields pane** | Far right | Lists all tables and fields from your data model |
    | **Filters pane** | Right side (may be collapsed) | Apply filters at report, page, or visual level |
    | **Pages tabs** | Bottom | Navigate between report pages |
-
-   ![Power BI Desktop interface overview](https://learn.microsoft.com/power-bi/fundamentals/media/desktop-getting-started/designer-gsg-blankreport.png)
 
 ### Sign In to Power BI Service
 
@@ -204,7 +202,7 @@ Before you can publish reports, you need to sign in to the Power BI Service at l
 
 1. In Power BI Desktop, select **File** → **Save As**.
 
-2. Choose a location on your computer and name the file **SalesAnalysis.pbix**.
+2. Select **Browse this device** and choose a location on your computer and name the file **SalesAnalysis.pbix**.
 
 3. Select **Save**.
 
@@ -231,8 +229,6 @@ The Northwind OData service is a publicly available demo service that provides s
 2. In the **Get Data** dialog, search for **OData** or scroll to find **OData Feed** in the list.
 
 3. Select **OData Feed** and then select **Connect**.
-
-   ![Get Data - OData Feed](https://learn.microsoft.com/power-bi/connect-data/media/desktop-quickstart-connect-to-data/qs-connect-data_02.png)
 
 4. In the **OData Feed** dialog, enter the following URL in the **URL** box:
    ```
@@ -277,17 +273,7 @@ The Power Query Editor opens with your two queries listed on the left.
 
 3. Let's remove some unnecessary columns to simplify our model. Select the **Home** tab, then select **Choose Columns**.
 
-4. In the **Choose Columns** dialog, **uncheck** the following columns to remove them:
-   - EmployeeID
-   - RequiredDate
-   - ShippedDate
-   - ShipVia
-   - ShipName
-   - ShipAddress
-   - ShipRegion
-   - ShipPostalCode
-
-5. Keep these columns **checked**:
+4. In the **Choose Columns** dialog, **uncheck** the Select All Columns option, then check only the following columns to keep:
    - OrderID
    - CustomerID
    - OrderDate
@@ -295,29 +281,46 @@ The Power Query Editor opens with your two queries listed on the left.
    - ShipCity
    - ShipCountry
 
-6. Select **OK** to apply the column selection.
+5. Select **OK** to apply the column selection.
 
 ### Clean and Prepare Order Details Data
 
 1. In the **Queries** pane, select the **Order_Details** query.
 
-2. Review the data. This table looks clean with just the essential fields: OrderID, ProductID, UnitPrice, Quantity, and Discount.
+2. Review the columns in the preview pane. You may notice columns named **Order** and **Product**. These are navigation properties from the OData service that contain nested table data.
 
-3. No changes needed for this table.
+   > **Why remove these columns?** The OData service automatically creates navigation columns when tables have relationships. However, you already have the foreign keys (OrderID and ProductID) needed to build proper relationships in Power BI's data model. Keeping these nested columns would make your data model unnecessarily complex and could cause performance issues.
+
+3. Remove the **Order** column:
+   - Right-click the **Order** column header
+   - Select **Remove**
+
+4. Remove the **Product** column:
+   - Right-click the **Product** column header
+   - Select **Remove**
+
+5. Your **Order_Details** query should now contain only these five essential fields:
+   - OrderID
+   - ProductID
+   - UnitPrice
+   - Quantity
+   - Discount
 
 ### Connect to CSV File for Products Data
 
 Now let's add the product catalog data from a CSV file.
 
-1. In Power Query Editor, select **Home** → **New Source** → **More**.
+1. Download the **products.csv** file from the sample-data folder of this repository.
 
-2. In the **Get Data** dialog, search for **CSV** or select **Text/CSV** from the list.
+2. Head back to the Power BI Desktop. In Power Query Editor, select **Home** → **New Source** → **More**.
 
-3. Select **Text/CSV** and then select **Connect**.
+3. In the **Get Data** dialog, search for **CSV** or select **Text/CSV** from the list.
 
-4. Navigate to the **sample-data** folder where you saved the lab files, select **products.csv**, and select **Open**.
+4. Select **Text/CSV** and then select **Connect**.
 
-5. Power BI automatically detects the file structure. You should see a preview showing:
+5.   select it, and then select **Open**.
+
+6. Power BI automatically detects the file structure. You should see a preview showing:
    - productID
    - productName
    - quantityPerUnit
@@ -326,22 +329,24 @@ Now let's add the product catalog data from a CSV file.
    - categoryID
    - unitCost
 
-6. Verify that the data looks correct (headers are properly detected, data types look appropriate).
+7. Verify that the data looks correct (headers are properly detected, data types look appropriate).
 
-7. Select **Transform Data** to add this table to your Power Query Editor.
+8. Select **Transform Data** to add this table to your Power Query Editor.
 
-8. The **products** query now appears in your Queries pane on the left.
+9. The **products** query now appears in your Queries pane on the left.
 
-9. In the **products** query, let's remove the **unitCost** column since we won't need it for this analysis:
-   - Right-click the **unitCost** column header and select **Remove**.
+10. In the **products** query, let's remove the **unitCost** column since we won't need it for this analysis:
+    - Right-click the **unitCost** column header and select **Remove**.
 
 ### Connect to CSV File for Customers Data
 
-1. In Power Query Editor, select **Home** → **New Source** → **Text/CSV**.
+1. Download the **customers.csv** file from the sample-data folder of this repository.
 
-2. Navigate to the **sample-data** folder, select **customers.csv**, and select **Open**.
+2. Head back to Power BI Desktop. In Power Query Editor, select **Home** → **New Source** → **Text/CSV**.
 
-3. Review the preview showing customer information:
+3. Select **customers.csv** and select **Open**.
+
+4. Review the preview showing customer information:
    - customerID
    - companyName
    - contactName
@@ -349,15 +354,16 @@ Now let's add the product catalog data from a CSV file.
    - city
    - country
 
-4. Select **Transform Data** to add this to Power Query Editor.
+5. Select **Transform Data** to add this to Power Query Editor.
 
-5. The **customers** query now appears in your Queries pane.
+6. The **customers** query now appears in your Queries pane.
 
-6. Let's clean up the customer names. Select the **contactName** column.
+7. Let's clean up the customer names. Select the **contactName** column.
 
-7. On the **Transform** tab, select **Format** → **Trim** to remove any leading or trailing spaces.
+8. On the **Transform** tab, select **Format** → **Trim** to remove any leading or trailing spaces.
 
-8. Also select **Format** → **Clean** to remove any non-printable characters.
+9. Also select **Format** → **Clean** to remove any non-printable characters.
+
 
 ### Rename Queries for Consistency
 
