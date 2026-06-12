@@ -283,6 +283,8 @@ The Power Query Editor opens with your two queries listed on the left.
 
 5. Select **OK** to apply the column selection.
 
+6. Select the ShipCountry column, then go to the **Transform** tab and select **Format** → **UPPERCASE** to convert all text to uppercase.
+
 ### Clean and Prepare Order Details Data
 
 1. In the **Queries** pane, select the **Order_Details** query.
