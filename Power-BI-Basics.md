@@ -664,7 +664,7 @@ Let's create the first page showing high-level sales KPIs and trends.
 1. Below the KPI cards, add a **Line chart** visual from the Visualizations pane.
 
 2. Configure the visual:
-   - **X-axis**: Drag **OrderDate** from the Orders table (Power BI will automatically create a date hierarchy)
+   - **X-axis**: Drag **OrderDate** from the Orders table 
    - **Y-axis**: Drag the **Total Revenue** measure
    - **Legend**: Leave empty for now
 
@@ -707,7 +707,7 @@ Let's create the first page showing high-level sales KPIs and trends.
 
 3. Change the slicer style:
    - Select the slicer
-   - In the Visualizations pane, expand the Slicer settings
+   - Go to Format pane → Visual → Slicer settings
    - Expand **Options**
    - Select **Between** (shows a slider with two handles for date range selection)
 
@@ -750,34 +750,29 @@ Let's create a second page focused on customer insights.
    - Select **Sort by** → **Total Revenue**
    - Select **Sort descending**
 
-6. Format the table:
-   - Go to Format pane → **Values**
-   - Adjust text size if needed
-   - Turn on **Column headers**
+6. Resize the table to take up the left half of the page.
 
-7. Resize the table to take up the left half of the page.
+7. Add title: "Top Customers by Revenue"
+   - In Format pane, go to General Tab
+   - Turn **Title** to **On**
+   - Change **Text** to "Top Customers by Revenue"
 
-8. Add title: "Top Customers by Revenue"
+#### Create Customer Treemap
 
-#### Create Customer Location Map
-
-1. Add a **Map** visual from the Visualizations pane.
+1. Add a **Treemap** visual from the Visualizations pane.
 
 2. Configure:
-   - **Location**: Drag **country** from Customers table
-   - **Size**: Drag **Total Revenue** measure
+   - **Category**: Drag **country** from Customers table
+   - **Values**: Drag **Total Revenue** measure
 
-3. The map displays bubbles showing revenue by country, with larger bubbles representing higher revenue.
+3. The treemap displays rectangles showing revenue by country, with larger rectangles representing higher revenue.
 
-4. Format the map:
-   - Go to Format pane → **Data colors**
-   - Choose a color scheme you prefer
-   - Go to **Map settings**
-   - Set **Zoom level** to fit your data
+4. Position the treemap on the right side of the page, taking up the remaining space.
 
-5. Position the map on the right side of the page, taking up the remaining space.
-
-6. Add title: "Revenue by Customer Location"
+5. Add title: "Revenue by Customer Location"
+   - In Format pane, go to General Tab
+   - Turn **Title** to **On**
+   - Change **Text** to "Revenue by Customer Location"
 
 #### Add Country Slicer
 
@@ -785,15 +780,16 @@ Let's create a second page focused on customer insights.
 
 2. Drag **country** from Customers table to the Field well.
 
-3. Change slicer style to **List** (default).
+3. Format:
+   - Go to Format pane → Visual → Slicer settings → Selection
+   - Enable **Show "Select all" option**
+   
+4. Position the slicer at the bottom of the page.
 
-4. Format:
-   - Enable **Select all** option in Format pane → **Slicer settings**
-   - Turn on **Single select** to **Off** (allow multiple selections)
-
-5. Position the slicer at the bottom of the page.
-
-6. Add title: "Filter by Country"
+5. Add title: "Filter by Country"
+   - In Format pane, go to General Tab
+   - Turn **Title** to **On**
+   - Change **Text** to "Filter by Country"
 
 #### Rename Page 2
 
@@ -818,14 +814,18 @@ Create a third page focusing on product-level insights.
    - **Quantity** from OrderDetails table (Power BI will sum it automatically)
 
 3. Sort by Total Revenue descending.
+   - Click the **More options** (...) on the visual
+   - Select **Sort by** → **Total Revenue**
+   - Select **Sort descending**
 
-4. Format the table appropriately.
+4. Resize to take up about 60% of the page width on the left side.
+   
+5. Add title: "Product Sales Performance"
+   - In Format pane, go to General Tab
+   - Turn **Title** to **On**
+   - Change **Text** to "Product Sales Performance"
 
-5. Resize to take up about 60% of the page width on the left side.
-
-6. Add title: "Product Sales Performance"
-
-#### Create Top Products Bar Chart
+#### Create Top Products Column Chart
 
 1. Add a **Clustered column chart** visual (vertical bars).
 
@@ -844,13 +844,15 @@ Create a third page focusing on product-level insights.
 
 4. Format the chart:
    - Rotate X-axis labels for better readability
-   - Go to Format pane → **X-axis**
-   - Set **Text size** to smaller if needed
-   - Enable **Title**
+   - Go to Format pane → **Visual** → **X-axis**
+   - Set **Text size** to 8
 
 5. Position on the right side of the page.
 
 6. Add title: "Top 10 Products by Revenue"
+   - In Format pane, go to General Tab
+   - Turn **Title** to **On**
+   - Change **Text** to "Top 10 Products by Revenue"
 
 #### Add Category Slicer
 
@@ -859,10 +861,15 @@ Create a third page focusing on product-level insights.
 2. Drag **categoryID** from Products table to the Field well.
 
 3. Format as a vertical list.
+   - Go to Format pane → Visual → Slicer settings → Options
+   - Select **Vertical list** (shows all categories in a list)
 
 4. Position at the bottom of the page.
 
 5. Add title: "Filter by Category"
+   - In Format pane, go to General Tab
+   - Turn **Title** to **On**
+   - Change **Text** to "Filter by Category"
 
 #### Rename Page 3
 
@@ -886,17 +893,19 @@ Let's verify that your visualizations interact with each other correctly.
 
 6. Select a country in the country slicer.
 
-7. The table and map update to show only customers and data from that country.
+7. The table and treemap update to show only customers and data from that country.
 
 8. Test the **Product Performance** page by selecting a category in the slicer.
+
+9. The table and column chart update to show only products from that category.
 
 > **Cross-filtering:** When you click on a visual element (bar, slice, data point), Power BI automatically filters related visuals on the same page. You can control this behavior using Format → Edit interactions.
 
 ### Save Your Work
 
-1. Press **Ctrl + S** to save your Power BI Desktop file.
+1. Navigate to the Sales Overview Page. Press **Ctrl + S** to save your Power BI Desktop file.
 
-> **Congratulations!** You've created a complete three-page interactive report with KPIs, trends, tables, charts, maps, and slicers. Your report is now ready to publish to the Power BI Service!
+> **Congratulations!** You've created a complete three-page interactive report with KPIs, trends, tables, charts, treemaps, and slicers. Your report is now ready to publish to the Power BI Service!
 
 ---
 
@@ -949,32 +958,29 @@ Your report opens in the Power BI Service in your web browser.
 3. Notice the toolbar at the top with options like:
    - **Edit**: Opens the report in editing mode (browser-based editing)
    - **Share**: Share the report with others
-   - **File** → **Export**: Export the report to PowerPoint or PDF
-   - **Refresh**: Refresh visuals (doesn't reload data from sources)
-
+   - **Export**: Export the report to PowerPoint or PDF
+   
 ### Explore the Workspace
 
 1. In the left navigation pane, select **My workspace**.
 
 2. You should see two items:
-   - **SalesAnalysis** (Report icon) - The report you just published
-   - **SalesAnalysis** (Dataset icon) - The data model (semantic model)
+   - **SalesAnalysis** (Type Report) - The report you just published
+   - **SalesAnalysis** (Type Semantic model) - The data model
 
-   > **Report vs. Dataset:** 
-   > - The **Dataset** contains your data model (tables, relationships, measures)
+   > **Report vs. Semantic model:** 
+   > - The **Semantic model** contains your data model (tables, relationships, measures)
    > - The **Report** contains your visualizations and pages
-   > - One dataset can power multiple reports
-
-3. You can hover over the report name to see options:
-   - Share
-   - Create a dashboard (we'll do this in the next task)
-   - Get insights
-   - Settings
-   - More options (...)
+   
+3. Get Quick Insights:
+   - Hover over the SalesAnalysis report
+   - Click the **More options** (...) that appears
+   - Select **Quick insights**
+   - Power BI runs automated analysis on your data and generates insights like trends, outliers, and correlations.
 
 ### Understanding Refresh
 
-1. Select the **More options** (...) next to the **SalesAnalysis** dataset.
+1. Go back to your workspace and select the **SalesAnalysis** Semantic model.
 
 2. Select **Refresh now** to manually refresh the data from your original sources.
 
@@ -1038,7 +1044,7 @@ Let's add more tiles to our dashboard from different report pages.
 
 6. Pin the **Top Customers by Revenue** table.
 
-7. Pin the **Revenue by Customer Location** map.
+7. Pin the **Revenue by Customer Location** treemap.
 
 8. Navigate to the **Product Performance** page.
 
@@ -1055,27 +1061,13 @@ Let's add more tiles to our dashboard from different report pages.
 4. Your dashboard displays all the tiles you pinned from your report, arranged in a default layout.
 
 5. Let's rearrange the tiles for a better layout:
-   - Click **Edit** → **Edit** at the top of the dashboard
    - Drag tiles to rearrange them
    - Resize tiles by dragging the corner handles
    - Suggested layout:
      - Row 1: Three KPI cards (Total Revenue, Total Orders, Avg Order Value) side by side
-     - Row 2: Orders by Country chart (left half) and Revenue by Customer Location map (right half)
-     - Row 3: Top Customers table (left half) and Top Products chart (right half)
+     - Row 2: Orders by Country chart (left half) and Revenue by Customer Location treemap (right half)
+     - Row 3: Top Customers by Revenue table (left half) and Top Products by Revenue table (right half)
 
-6. When you're satisfied with the layout, click **Done editing** (or **Exit edit mode**).
-
-### Add a Dashboard Title and Description
-
-1. With the dashboard open, select the **More options** (...) at the top-right.
-
-2. Select **Edit details**.
-
-3. In the **Dashboard details** dialog:
-   - **Title**: Sales Performance Dashboard (already filled)
-   - **Description**: Add a description like "Overview of sales performance including revenue, orders, top customers, and top products"
-
-4. Select **Save**.
 
 ### Interact with Dashboard Tiles
 
@@ -1087,7 +1079,7 @@ Dashboard tiles are interactive:
 
 3. This allows dashboard viewers to quickly drill into details when they see something interesting.
 
-4. Use the browser's back button or click the dashboard name in the breadcrumb at the top to return to the dashboard.
+4. Use the browser's back button  to return to the dashboard.
 
 ### Share Your Dashboard
 
@@ -1099,22 +1091,16 @@ Now let's share the dashboard with colleagues.
 
 3. In the **Enter a name or email address** field, enter the email address of someone you want to share with.
 
-   > **Important:** The recipient must have a Power BI Pro license to view shared content. If they don't have Pro, they'll be prompted to start a trial or upgrade.
+   > **Important:** The recipient must have a Power BI Pro license to view shared content and must be in the same organization (same email domain). If they don't have access, they'll receive an error when trying to view the dashboard.
 
-4. Optionally, add a message in the **Add a message (optional)** field, such as:
-   ```
-   Hi Team, I've created a sales performance dashboard showing our key metrics. Please let me know if you have any questions!
-   ```
-
-5. Review the sharing options:
+4. Review the sharing options:
    - ☑ **Allow recipients to share your dashboard** - Check this if you want recipients to be able to share with others
-   - ☑ **Allow recipients to build content with the data** - Check this if you want recipients to create new reports using your dataset
+   - ☑ **Allow recipients to build content with the data associated with this dashboard** - Check this if you want recipients to create new reports using your dataset
+   - ☑ **Send an email notification** - Check this to send an email with a link to the dashboard
 
-6. Select **Share** (or **Grant access**).
+5. Select **Grant access**.
 
-7. The recipient receives an email notification with a link to access the dashboard.
-
-8. You can also copy the dashboard link by selecting **Get a link to this dashboard** at the bottom of the Share dialog. This gives you a direct URL you can share via email, Teams, or other channels.
+6. The recipient receives an email notification with a link to access the dashboard.
 
 ### Manage Dashboard Access
 
