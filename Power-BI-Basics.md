@@ -452,12 +452,12 @@ Let's create the first relationship connecting customers to their orders.
 
 4. Double-click the relationship line to view its properties.
 
-5. The **Edit relationship** dialog appears. Verify the following settings:
+5. The **New relationship** dialog appears. Verify the following settings:
 
    | Setting | Value |
    | --- | --- |
-   | From: Table (Column) | Customers (customerID) |
-   | To: Table (Column) | Orders (CustomerID) |
+   | From: Table (Column) | Orders (CustomerID) |
+   | To: Table (Column) | Customers (CustomerID) |
    | Cardinality | Many to one (\*:1) |
    | Cross filter direction | Single |
    | Make this relationship active | ✓ Checked |
@@ -549,7 +549,7 @@ Let's verify that the relationships work correctly by creating a quick test visu
 
 3. Expand the **OrderDetails** table and check the box next to **Quantity**.
 
-4. Power BI automatically creates a table showing total quantity by customer country.
+4. Select the Table visual from the Visualizations pane. A table appears showing countries and the total quantity of products ordered.
 
 5. This confirms that your relationships are working correctly - the filter is propagating from Customers → Orders → OrderDetails!
 
