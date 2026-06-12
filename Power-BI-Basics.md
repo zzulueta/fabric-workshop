@@ -320,7 +320,7 @@ Now let's add the product catalog data from a CSV file.
 
 4. Select **Text/CSV** and then select **Connect**.
 
-5.   select it, and then select **Open**.
+5. Select the **products.csv** file and then select **Open**.
 
 6. Power BI automatically detects the file structure. You should see a preview showing:
    - productID
@@ -333,7 +333,7 @@ Now let's add the product catalog data from a CSV file.
 
 7. Verify that the data looks correct (headers are properly detected, data types look appropriate).
 
-8. Select **Transform Data** to add this table to your Power Query Editor.
+8. Select **OK** to add this table to your Power Query Editor.
 
 9. The **products** query now appears in your Queries pane on the left.
 
@@ -356,15 +356,17 @@ Now let's add the product catalog data from a CSV file.
    - city
    - country
 
-5. Select **Transform Data** to add this to Power Query Editor.
+5. Select **OK** to add this to Power Query Editor.
 
 6. The **customers** query now appears in your Queries pane.
 
-7. Let's clean up the customer names. Select the **contactName** column.
+7. Verify if the headers of the table is correct. If not, select the **Use First Row as Headers** button in the ribbon found in the **Home** tab.
 
-8. On the **Transform** tab, select **Format** → **Trim** to remove any leading or trailing spaces.
+8. Let's clean up the customer names. Select the **contactName** column.
 
-9. Also select **Format** → **Clean** to remove any non-printable characters.
+9. On the **Transform** tab, select **Format** → **Trim** to remove any leading or trailing spaces.
+
+10. Also select **Format** → **Clean** to remove any non-printable characters.
 
 
 ### Rename Queries for Consistency
@@ -426,9 +428,9 @@ A well-designed data model is the foundation of effective reporting in Power BI.
 
 1. On the left side of Power BI Desktop, select the **Model** view icon (it looks like three connected boxes).
 
-   ![Model View icon](https://learn.microsoft.com/power-bi/transform-model/media/desktop-create-and-manage-relationships/relationships-view-icon.png)
-
 2. You should now see a diagram showing your four tables as boxes with their columns listed inside.
+
+   > **Auto-detected Relationships:** Power BI often automatically detects and creates relationships based on matching column names. You may already see lines connecting your tables. If so, that's great! The following steps will help you verify and understand these relationships. If you don't see any relationships yet, we'll create them manually.
 
 3. Arrange the tables by dragging them around the canvas so you can see them clearly:
    - Place **Customers** on the left
@@ -440,9 +442,11 @@ A well-designed data model is the foundation of effective reporting in Power BI.
 
 Let's create the first relationship connecting customers to their orders.
 
+> **Note:** Power BI may have already auto-detected and created these relationships for you based on matching column names (CustomerID, OrderID, ProductID). If you see relationship lines already connecting your tables, you can skip the manual creation steps and proceed directly to step 4 to verify the relationship properties. The following steps show you how to manually create relationships if needed.
+
 1. In the **Customers** table, locate the **customerID** column.
 
-2. Click and drag the **customerID** column from the **Customers** table to the **CustomerID** column in the **Orders** table.
+2. **If a relationship line doesn't already exist**, click and drag the **customerID** column from the **Customers** table to the **CustomerID** column in the **Orders** table. If a line already exists, proceed to step 4.
 
 3. A line appears between the two tables, indicating a relationship has been created.
 
@@ -472,7 +476,7 @@ Let's create the first relationship connecting customers to their orders.
 
 Now connect the Orders table to the OrderDetails table.
 
-1. Drag the **OrderID** column from the **Orders** table to the **OrderID** column in the **OrderDetails** table.
+1. **If a relationship line doesn't already exist**, drag the **OrderID** column from the **Orders** table to the **OrderID** column in the **OrderDetails** table. If a line already exists, proceed to step 3.
 
 2. A relationship line appears.
 
@@ -492,7 +496,7 @@ Now connect the Orders table to the OrderDetails table.
 
 Finally, connect products to order details.
 
-1. Drag the **productID** column from the **Products** table to the **ProductID** column in the **OrderDetails** table.
+1. **If a relationship line doesn't already exist**, drag the **productID** column from the **Products** table to the **ProductID** column in the **OrderDetails** table. If a line already exists, proceed to step 3.
 
 2. A relationship line appears.
 
