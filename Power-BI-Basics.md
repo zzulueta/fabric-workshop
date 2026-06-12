@@ -575,7 +575,7 @@ Let's create the first page showing high-level sales KPIs and trends.
 
 2. You should see a blank report page labeled "Page 1" at the bottom.
 
-3. Let's create a card showing total revenue. On the **Home** tab, select **Card** from the visualizations (or select the Card icon in the Visualizations pane).
+3. Let's create a card showing total revenue. Select the Card icon in the Visualizations pane.
 
 4. A card visual appears on your canvas.
 
@@ -600,20 +600,26 @@ Let's create the first page showing high-level sales KPIs and trends.
 
 13. Format the card:
     - With the card selected, go to the **Format** pane (paint roller icon)
-    - Expand **Callout value**
-    - Set **Display units** to **Thousands (K)** or **Auto**
+    - Select the Visual tab
+    - Expand **Callout**
+    - Expand **Apply settings to**
+    - Select **Total Revenue** in the **Cards** dropdown
+    - Expand **Value**
+    - Set **Display units** to **Thousands**
     - Set **Value decimal places** to **0**
+    - Turn **Label** to **Off** (optional, hides the "Total Revenue" label on the card)
 
 14. Resize the card to make it smaller and position it in the upper-left corner of the canvas.
 
 15. Add a title to the card:
     - In the Format pane, expand **General** → **Title**
     - Turn **Title** to **On**
-    - Change **Title text** to "Total Revenue"
+    - Expand **Title**
+    - Change **Text** to "Total Revenue"
 
 #### Create Order Count Card
 
-1. Add another card visual to the canvas (from the Visualizations pane).
+1. Under the Visualizations pane, select Add data to your visual tab. Add another card visual to the canvas.
 
 2. Right-click the **Orders** table in the Fields pane and select **New measure**.
 
@@ -647,7 +653,7 @@ Let's create the first page showing high-level sales KPIs and trends.
 
 5. Drag the **Average Order Value** measure to the card.
 
-6. Format: Display units Auto, 0 decimal places.
+6. Format: Display units None, 2 decimal places.
 
 7. Add title: "Average Order Value"
 
@@ -684,9 +690,12 @@ Let's create the first page showing high-level sales KPIs and trends.
 3. Sort the chart by Total Orders descending:
    - Select the visual
    - Click the **More options** (...) at the top-right of the visual
-   - Select **Sort axis** → **Sort descending**
+   - Select **Sort by** → **Sort descending**
 
 4. Add title: "Orders by Country"
+   - In Format pane, go to the General Tab
+   - Turn **Title** to **On**
+   - Change **Text** to "Orders by Country"
 
 5. Position this chart to the right of the line chart.
 
@@ -698,16 +707,20 @@ Let's create the first page showing high-level sales KPIs and trends.
 
 3. Change the slicer style:
    - Select the slicer
-   - In the Visualizations pane, click the dropdown arrow next to the slicer icon
+   - In the Visualizations pane, expand the Slicer settings
+   - Expand **Options**
    - Select **Between** (shows a slider with two handles for date range selection)
 
 4. Position the slicer at the bottom of the page, spanning the full width.
 
 5. Add title: "Select Date Range"
+   - Select the General tab in the Format pane
+   - Turn **Title** to **On**
+   - Change **Text** to "Select Date Range"
 
 #### Rename Page 1
 
-1. At the bottom of the screen, right-click **Page 1** and select **Rename page**.
+1. At the bottom of the screen, right-click **Page 1** and select **Rename**.
 
 2. Type **Sales Overview** and press **Enter**.
 
@@ -784,7 +797,7 @@ Let's create a second page focused on customer insights.
 
 #### Rename Page 2
 
-1. Right-click **Page 2** at the bottom and select **Rename page**.
+1. Right-click **Page 2** at the bottom and select **Rename**.
 
 2. Type **Customer Analysis** and press **Enter**.
 
@@ -853,7 +866,7 @@ Create a third page focusing on product-level insights.
 
 #### Rename Page 3
 
-1. Right-click **Page 3** and select **Rename page**.
+1. Right-click **Page 3** and select **Rename**.
 
 2. Type **Product Performance** and press **Enter**.
 
