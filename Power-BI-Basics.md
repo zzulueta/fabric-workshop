@@ -97,7 +97,7 @@ Power BI Desktop
 │   │
 │   └── Page 3: Product Performance
 │       ├── Product Sales Table
-│       ├── Top Products Bar Chart
+│       ├── Top 10 Products Column Chart
 │       └── Category Slicer
 │
 └── Visualizations & Interactivity
@@ -116,7 +116,7 @@ Power BI Service (https://app.powerbi.com)
 │   │   ├── Total Sales Card
 │   │   ├── Orders by Country Chart
 │   │   ├── Top Customers Table
-│   │   └── Top Products Chart
+│   │   └── Top 10 Products by Revenue Column Chart
 │   │
 │   └── Real-time Interaction
 │       └── Click tiles to navigate to source report
@@ -360,7 +360,7 @@ Now let's add the product catalog data from a CSV file.
 
 6. The **customers** query now appears in your Queries pane.
 
-7. Verify if the headers of the table is correct. If not, select the **Use First Row as Headers** button in the ribbon found in the **Home** tab.
+7. Verify if the headers of the table are correct. If not, select the **Use First Row as Headers** button in the ribbon found in the **Home** tab.
 
 8. Let's clean up the customer names. Select the **contactName** column.
 
@@ -484,9 +484,9 @@ Now connect the Orders table to the OrderDetails table.
 
    | Setting | Value |
    | --- | --- |
-   | From: Table (Column) | Orders (OrderID) |
-   | To: Table (Column) | OrderDetails (OrderID) |
-   | Cardinality | One to many (1:\*) |
+   | From: Table (Column) | OrderDetails (OrderID) |
+   | To: Table (Column) | Orders (OrderID) |
+   | Cardinality | Many to one (\*:1) |
    | Cross filter direction | Single |
    | Make this relationship active | ✓ Checked |
 
@@ -504,9 +504,9 @@ Finally, connect products to order details.
 
    | Setting | Value |
    | --- | --- |
-   | From: Table (Column) | Products (productID) |
-   | To: Table (Column) | OrderDetails (ProductID) |
-   | Cardinality | One to many (1:\*) |
+   | From: Table (Column) | OrderDetails (ProductID) |
+   | To: Table (Column) | Products (productID) |
+   | Cardinality | Many to one (\*:1) |
    | Cross filter direction | Single |
    | Make this relationship active | ✓ Checked |
 
@@ -619,7 +619,7 @@ Let's create the first page showing high-level sales KPIs and trends.
 
 #### Create Order Count Card
 
-1. Under the Visualizations pane, select Add data to your visual tab. Add another card visual to the canvas.
+1. Add another Card visual to the canvas from the Visualizations pane.
 
 2. Right-click the **Orders** table in the Fields pane and select **New measure**.
 
@@ -690,10 +690,11 @@ Let's create the first page showing high-level sales KPIs and trends.
 3. Sort the chart by Total Orders descending:
    - Select the visual
    - Click the **More options** (...) at the top-right of the visual
+   - Select **Sort by** → **Total Orders**
    - Select **Sort by** → **Sort descending**
 
 4. Add title: "Orders by Country"
-   - In Format pane, go to the General Tab
+   - In Format pane, go to the General tab
    - Turn **Title** to **On**
    - Change **Text** to "Orders by Country"
 
@@ -753,7 +754,7 @@ Let's create a second page focused on customer insights.
 6. Resize the table to take up the left half of the page.
 
 7. Add title: "Top Customers by Revenue"
-   - In Format pane, go to General Tab
+   - In Format pane, go to General tab
    - Turn **Title** to **On**
    - Change **Text** to "Top Customers by Revenue"
 
@@ -770,7 +771,7 @@ Let's create a second page focused on customer insights.
 4. Position the treemap on the right side of the page, taking up the remaining space.
 
 5. Add title: "Revenue by Customer Location"
-   - In Format pane, go to General Tab
+   - In Format pane, go to General tab
    - Turn **Title** to **On**
    - Change **Text** to "Revenue by Customer Location"
 
@@ -787,7 +788,7 @@ Let's create a second page focused on customer insights.
 4. Position the slicer at the bottom of the page.
 
 5. Add title: "Filter by Country"
-   - In Format pane, go to General Tab
+   - In Format pane, go to General tab
    - Turn **Title** to **On**
    - Change **Text** to "Filter by Country"
 
@@ -821,11 +822,11 @@ Create a third page focusing on product-level insights.
 4. Resize to take up about 60% of the page width on the left side.
    
 5. Add title: "Product Sales Performance"
-   - In Format pane, go to General Tab
+   - In Format pane, go to General tab
    - Turn **Title** to **On**
    - Change **Text** to "Product Sales Performance"
 
-#### Create Top Products Column Chart
+#### Create Top 10 Products Column Chart
 
 1. Add a **Clustered column chart** visual (vertical bars).
 
@@ -850,7 +851,7 @@ Create a third page focusing on product-level insights.
 5. Position on the right side of the page.
 
 6. Add title: "Top 10 Products by Revenue"
-   - In Format pane, go to General Tab
+   - In Format pane, go to General tab
    - Turn **Title** to **On**
    - Change **Text** to "Top 10 Products by Revenue"
 
@@ -867,7 +868,7 @@ Create a third page focusing on product-level insights.
 4. Position at the bottom of the page.
 
 5. Add title: "Filter by Category"
-   - In Format pane, go to General Tab
+   - In Format pane, go to General tab
    - Turn **Title** to **On**
    - Change **Text** to "Filter by Category"
 
@@ -1066,7 +1067,7 @@ Let's add more tiles to our dashboard from different report pages.
    - Suggested layout:
      - Row 1: Three KPI cards (Total Revenue, Total Orders, Avg Order Value) side by side
      - Row 2: Orders by Country chart (left half) and Revenue by Customer Location treemap (right half)
-     - Row 3: Top Customers by Revenue table (left half) and Top Products by Revenue table (right half)
+     - Row 3: Top Customers by Revenue table (left half) and Top 10 Products by Revenue chart (right half)
 
 
 ### Interact with Dashboard Tiles
@@ -1094,26 +1095,13 @@ Now let's share the dashboard with colleagues.
    > **Important:** The recipient must have a Power BI Pro license to view shared content and must be in the same organization (same email domain). If they don't have access, they'll receive an error when trying to view the dashboard.
 
 4. Review the sharing options:
-   - ☑ **Allow recipients to share your dashboard** - Check this if you want recipients to be able to share with others
-   - ☑ **Allow recipients to build content with the data associated with this dashboard** - Check this if you want recipients to create new reports using your dataset
-   - ☑ **Send an email notification** - Check this to send an email with a link to the dashboard
+   - **Allow recipients to share your dashboard** - Check this if you want recipients to be able to share with others
+   - **Allow recipients to build content with the data associated with this dashboard** - Check this if you want recipients to create new reports using your dataset
+   - **Send an email notification** - Check this to send an email with a link to the dashboard
 
 5. Select **Grant access**.
 
 6. The recipient receives an email notification with a link to access the dashboard.
-
-### Manage Dashboard Access
-
-1. Select **Manage permissions** on the dashboard (or **More options** → **Manage permissions**).
-
-2. This shows everyone who has access to the dashboard.
-
-3. You can:
-   - Add more people
-   - Remove access for specific users
-   - Change permissions (like revoking share or build rights)
-
-4. Select **Close** when done reviewing.
 
 ### Set Up Dashboard Alerts (Optional)
 
@@ -1130,8 +1118,8 @@ You can configure alerts to notify you when data reaches certain thresholds.
 5. Configure the alert:
    - **Condition**: Above
    - **Threshold**: Enter a value (e.g., 1,000,000)
-   - **Notification**: Email
-   - **Maximum**: Every 24 hours
+   - **Maximum notification frequency**: Every 24 hours
+   - **Send me email too**: Check this to receive email notifications
 
 6. Select **Save and close**.
 
@@ -1143,17 +1131,23 @@ You can configure alerts to notify you when data reaches certain thresholds.
 
 Subscriptions send regular email snapshots of your dashboard.
 
-1. On the dashboard, select **Subscribe** (or **More options** → **Subscribe**).
+1. On the dashboard, select **Subscribe to dashboard**.
 
-2. Configure the subscription:
-   - **Frequency**: Daily or Weekly
-   - **Time**: Select a specific time
-   - **Subject**: Customize the email subject line
-   - **Message**: Add a custom message
+2. Select **Create a subscription**.
 
-3. Select **Save and close**.
+3. Configure the subscription:
+   - **Subscription name**: Enter a name (e.g., "Daily Sales Snapshot")
+   - **Start date**: Select a specific date
+   - **End date**: Select a specific date
+   - **Repeat**: Hourly, Daily, Weekly, or Monthly
+   - **Scheduled time**: Select a specific time
+   - **Time zone**: Select your time zone
+   - **Email subject**: Enter a subject for the email (e.g., "Daily Sales Performance Dashboard Snapshot")
+   - **Message**: Enter a message for the email 
 
-4. You (and anyone you add) will receive email snapshots of the dashboard at the specified frequency.
+4. Select **Save**.
+
+5. You will receive email snapshots of the dashboard at the specified frequency.
 
 > **Congratulations!** You've successfully created a dashboard in the Power BI Service, arranged tiles for optimal viewing, and shared it with colleagues. Your team can now access real-time sales insights from anywhere!
 
