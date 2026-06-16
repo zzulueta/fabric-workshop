@@ -1160,13 +1160,18 @@ In this lab, you've learned the fundamentals of Power BI by completing a compreh
 ### What You Accomplished
 
 ✅ **Task 1**: Set up Power BI Desktop and signed into the Power BI Service
+
 ✅ **Task 2**: Connected to multiple data sources (OData service and CSV files) and imported data
+
 ✅ **Task 3**: Built a star schema data model with relationships between customers, orders, and products
+
 ✅ **Task 4**: Created three interactive report pages with various visualizations:
    - Sales Overview: KPIs, trends, and geographic analysis
    - Customer Analysis: Top customers and location-based insights
    - Product Performance: Product sales and category filtering
+
 ✅ **Task 5**: Published your report to the Power BI Service
+
 ✅ **Task 6**: Created and shared a dashboard highlighting key metrics
 
 ### Key Concepts You Learned
